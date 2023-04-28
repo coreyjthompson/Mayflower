@@ -1,6 +1,6 @@
 using CsvHelper.Configuration.Attributes;
 
-namespace Mayflower.Web.DTO
+namespace Mayflower.Web.Dto
 {
     public class Transaction
     {

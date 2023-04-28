@@ -1,10 +1,9 @@
 using CsvHelper;
-using Mayflower.Web.DTO;
 using System.Globalization;
 
 namespace Mayflower.Web.Data
 {
-    public class AllyBankService
+    public class TransactionService
     {
         private const string BASEPATH = @"C:\Users\cthompson\Downloads\transactions.csv";
 
@@ -13,57 +12,19 @@ namespace Mayflower.Web.Data
             1032497347, 1054452618
         };
 
-        public Task<List<Transaction>> GetTransactionsAsync()
+        public Task<List<Dto.Transaction>> GetTransactionsAsync()
         {
-            return Task.FromResult(new List<Transaction>());
+            return Task.FromResult(new List<Dto.Transaction>());
         }
 
-        public List<Transaction> GetTransactions()
+        public List<Dto.Transaction> GetTransactions()
         {
-            //using (var reader = new StreamReader(BASEPATH))
-            //{
-            //    using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            //    {
-            //        var records = csv.GetRecords<Transaction>().ToList();
-
-            //        return records;
-            //    }
-            //}
-
             using StreamReader reader = new StreamReader(BASEPATH);
             using CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            var records = csv.GetRecords<Transaction>().ToList();
+            var records = csv.GetRecords<Dto.Transaction>().ToList();
 
             return records;
         }
-
-        //public List<Transaction> GetTransactionsByAccountNumbers(IList<string> accounts)
-        //{
-        //    using (var reader = new StreamReader("path\\to\\file.csv"))
-        //    {
-        //        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-        //        {
-        //            var records = csv.GetRecords<Transaction>().ToListAsync();
-        //            return records;
-        //        }
-        //    }
-
-        //    return await records;
-        //}
-
-        //public async Task<List<Transaction>> GetTransactionsByAccountNumbersAsync(int[] accounts)
-        //{
-        //    using (var reader = new StreamReader("path\\to\\file.csv"))
-        //    {
-        //        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-        //        {
-        //            var records = csv.GetRecords<Transaction>().ToListAsync();
-        //            return records;
-        //        }
-        //    }
-
-        //    return await records;
-        //}
 
         public void GetTransactionData()
         {

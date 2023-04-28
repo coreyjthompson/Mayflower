@@ -1,5 +1,5 @@
-﻿@page "/t"
-@inject AllyBankService bankService
+﻿@page "/Transactions"
+@inject TransactionService bankService
 
 <PageTitle>Account Transactions</PageTitle>
 
@@ -40,7 +40,7 @@ else
 }
 
 @code {
-    private IList<Transaction>? transactions;
+    private IList<Dto.Transaction>? transactions;
 
     protected override async Task OnInitializedAsync()
     {

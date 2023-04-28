@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using MEI.Core.Helpers;
 
 namespace Mayflower.DomainModels
 {
@@ -10,7 +11,20 @@ namespace Mayflower.DomainModels
         public RecurrenceStyle Id { get; set; }
 
         [Required, Column(TypeName = "varchar(25)")]
-        public string Description { get; set; } = "No Recurrence";
+        public string Value { get; set; } = "NoRecurrence";
+
+        [Required, Column(TypeName = "varchar(25)")]
+        public string Name { get; set; } = "No Recurrence";
+
+        public RecurrenceTheme() { }    
+
+        public RecurrenceTheme(RecurrenceStyle style)
+        {
+            Id = style;
+            Value = style.ToName();
+            Name = style.ToDescription();
+        }
+
     }
 
     public enum RecurrenceStyle : int

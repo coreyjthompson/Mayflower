@@ -1,16 +1,31 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using MEI.Core.Helpers;
 
 namespace Mayflower.DomainModels
 {
-    public class RecurrenceDayofWeek
+    public class RecurrenceDayOfWeek
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public DayOfWeek Id { get; set; }
 
         [Required, Column(TypeName = "varchar(25)")]
-        public string Description { get; set; } = "None";
+        public string Value { get; set; } = "None";
+
+        [Required, Column(TypeName = "varchar(25)")]
+        public string Name { get; set; } = "None";
+
+        public RecurrenceDayOfWeek() { }
+
+        public RecurrenceDayOfWeek(DayOfWeek day)
+        {
+            Id = day;
+            Value = day.ToName();
+            Name = day.ToDescription();
+
+        }
+
     }
 
     public enum DayOfWeek : int
@@ -32,5 +47,6 @@ namespace Mayflower.DomainModels
         [Description("Saturday")]
         Saturday = 64
     }
+
 
 }

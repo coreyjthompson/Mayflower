@@ -30,11 +30,11 @@ namespace Mayflower.DomainModels
         public RecurrenceStyle RecurrenceTheme { get; set; }
 
         #region Navigation
-        public virtual TransactionAccount TransactionAccount { get; set; } = new TransactionAccount();
+        public virtual TransactionAccount? TransactionAccount { get; set; }
 
-        public virtual ReminderTheme _reminderTheme { get; set; } = new ReminderTheme();
+        public virtual ReminderTheme? _reminderTheme { get; set; }
 
-        public virtual RecurrenceTheme _recurrenceTheme { get; set; } = new RecurrenceTheme();
+        public virtual RecurrenceTheme? _recurrenceTheme { get; set; }
         #endregion
     }
 }

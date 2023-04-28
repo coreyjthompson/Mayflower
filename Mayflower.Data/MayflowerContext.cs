@@ -16,7 +16,7 @@ namespace Mayflower.Data
         public DbSet<ReminderTheme> ReminderThemes { get; set; }
         public DbSet<RecurrenceOrdinal> RecurrenceOrdinals { get; set; }
         public DbSet<RecurrenceTheme> RecurrenceThemes { get; set; }
-        public DbSet<RecurrenceDayofWeek> RecurrenceDaysofWeek { get; set; }
+        public DbSet<RecurrenceDayOfWeek> RecurrenceDaysOfWeek { get; set; }
         public DbSet<Reminder> Reminders { get; set; }
 
 
@@ -40,6 +40,8 @@ namespace Mayflower.Data
                     modelBuilder.Entity(entityType.ClrType).ToTable(entityType.ClrType.Name);
                 }
             }
+
+            modelBuilder.SeedData();
 
             base.OnModelCreating(modelBuilder);
         }

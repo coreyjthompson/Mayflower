@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System;
+using MEI.Core.Helpers;
 
 namespace Mayflower.DomainModels
 {
@@ -10,7 +12,19 @@ namespace Mayflower.DomainModels
         public TransactionStyle Id { get; set; }
 
         [Required, Column(TypeName = "varchar(25)")]
-        public string Description { get; set; } = "None";
+        public string Value { get; set; } = "None";
+
+        [Required, Column(TypeName = "varchar(25)")]
+        public string Name { get; set; } = "None";
+
+        public TransactionTheme() { }
+
+        public TransactionTheme(TransactionStyle style)
+        {
+            Id = style;
+            Value = style.ToName();
+            Name = style.ToDescription();
+        }
     }
 
     public enum TransactionStyle : int

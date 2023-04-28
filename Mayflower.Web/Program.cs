@@ -2,6 +2,7 @@ using Mayflower.Web.Data;
 using Mayflower.Data.Helpers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Mayflower.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -9,9 +10,15 @@ var configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
-builder.Services.AddSingleton<AllyBankService>();
+builder.Services.AddSingleton<TransactionService>();
 builder.Services.AddMayflowerData(configuration);
+builder.Services.AddOptions().Configure<ApplicationOptions>(configuration.GetSection(nameof(ApplicationOptions)));
+
+if(!builder.Environment.IsDevelopment())
+{
+    builder.WebHost.UseStaticWebAssets();
+}
+
 
 var app = builder.Build();
 
