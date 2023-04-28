@@ -5,10 +5,10 @@ using MEI.Core.Helpers;
 
 namespace Mayflower.DomainModels
 {
-    public class TransactionAccountTheme
+    public class FinancialAccountTheme
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public TransactionAccountStyle Id { get; set; }
+        public FinancialAccountStyle Id { get; set; }
 
         [Required, Column(TypeName = "varchar(25)")]
         public string Value { get; set; } = "None";
@@ -16,9 +16,9 @@ namespace Mayflower.DomainModels
         [Required, Column(TypeName = "varchar(25)")]
         public string Name { get; set; } = "None";
 
-        public TransactionAccountTheme() { }   
+        public FinancialAccountTheme() { }   
 
-        public TransactionAccountTheme(TransactionAccountStyle style)
+        public FinancialAccountTheme(FinancialAccountStyle style)
         {
             Id = style;
             Value = style.ToName();
@@ -27,7 +27,7 @@ namespace Mayflower.DomainModels
 
     }
 
-    public enum TransactionAccountStyle : int
+    public enum FinancialAccountStyle : int
     {
         [Description("None")]
         None = 0,

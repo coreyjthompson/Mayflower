@@ -11,8 +11,8 @@ namespace Mayflower.Data
         }
 
         public DbSet<TransactionTheme> TransactionThemes { get; set; }
-        public DbSet<TransactionAccountTheme> TransactionAccountThemes { get; set; }
-        public DbSet<TransactionAccount> TransactionAccounts { get; set; }
+        public DbSet<FinancialAccountTheme> FinancialAccountThemes { get; set; }
+        public DbSet<FinancialAccount> TransactionAccounts { get; set; }
         public DbSet<ReminderTheme> ReminderThemes { get; set; }
         public DbSet<RecurrenceOrdinal> RecurrenceOrdinals { get; set; }
         public DbSet<RecurrenceTheme> RecurrenceThemes { get; set; }

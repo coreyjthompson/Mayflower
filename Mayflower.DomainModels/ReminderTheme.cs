@@ -10,10 +10,10 @@ namespace Mayflower.DomainModels
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public ReminderStyle Id { get; set; }
 
-        [Required, Column(TypeName = "varchar(25)")]
+        [Column(TypeName = "varchar(25)")]
         public string Value { get; set; } = "Unknown";
 
-        [Required, Column(TypeName = "varchar(25)")]
+        [Column(TypeName = "varchar(25)")]
         public string Name { get; set; } = "Unknown";
 
         public ReminderTheme() { }  

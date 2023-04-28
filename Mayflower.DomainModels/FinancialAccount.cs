@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Mayflower.DomainModels
 {
-    public class TransactionAccount
+    public class FinancialAccount
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
         public int Id { get; set; }
@@ -11,17 +11,19 @@ namespace Mayflower.DomainModels
         [Column(TypeName = "varchar(255)"), Required]
         public string Number { get; set; } = string.Empty;
 
-        [Column("TransactionAccountThemeId"), ForeignKey("_transactionAccountTheme"), Required]
-        public TransactionAccountStyle Type { get; set; }
+        [Column("FinancialAccountThemeId"), ForeignKey("_financialAccountTheme"), Required]
+        public FinancialAccountStyle Type { get; set; }
 
         [Column(TypeName = "varchar(255)")]
         public string? NickName { get; set; }
 
-        [Column(TypeName = "varchar(255)")]
-        public string? AccountVendor { get; set; }
+        [Required]
+        public int FinancialInstitutionId { get; set; }
 
         #region Navigation
-        public virtual TransactionAccountTheme? _transactionAccountTheme { get; set; }
+        public virtual FinancialInstitution FinancialInstitution { get; set; } = new FinancialInstitution();
+
+        public virtual FinancialAccountTheme? _financialAccountTheme { get; set; }
         #endregion
     }
 
