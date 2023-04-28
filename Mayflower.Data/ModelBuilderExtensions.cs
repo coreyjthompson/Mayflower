@@ -98,12 +98,13 @@ namespace Mayflower.Data
             var currentDate = DateOnly.FromDateTime(DateTime.Now);
 
             builder.Entity<Reminder>().HasData(
-                new Reminder { Id = 1, Amount = 235.56m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Pay car payment", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 2, Amount = 76.25m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(5), Description = "water bill", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 3, Amount = 650.00m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "mortage payment", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 4, Amount = 225.00m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "vectren bill", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 5, Amount = 1200.00m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Pay car payment", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 6, Amount = 235.56m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Pay car payment", ReminderTheme = ReminderStyle.Bill }
+                new Reminder { Id = 1, Amount = 235.56m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Pay car payment", ReminderTheme = ReminderStyle.Bill },
+                new Reminder { Id = 2, Amount = 76.25m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(5), Description = "water bill", ReminderTheme = ReminderStyle.Bill },
+                new Reminder { Id = 3, Amount = 650.00m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "mortage payment", ReminderTheme = ReminderStyle.Bill },
+                new Reminder { Id = 4, Amount = 225.00m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "vectren bill", ReminderTheme = ReminderStyle.Bill },
+                new Reminder { Id = 6, Amount = 235.56m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Pay car payment", ReminderTheme = ReminderStyle.Bill },
+                new Reminder { Id = 5, Amount = 1200.00m, TransactionFromAccountId = 3, TransactionToAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Transfer from Primary Savings", ReminderTheme = ReminderStyle.Bill },
+
 
             );
 

@@ -11,31 +11,33 @@ namespace Mayflower.DomainModels
         public ReminderStyle Id { get; set; }
 
         [Column(TypeName = "varchar(25)")]
-        public string Value { get; set; } = "Unknown";
+        public string Value { get; set; } = "Error";
 
         [Column(TypeName = "varchar(25)")]
-        public string Name { get; set; } = "Unknown";
+        public string Name { get; set; } = "Error";
 
         public ReminderTheme() { }  
 
         public ReminderTheme(ReminderStyle style)
         {
             Id = style;
-            Value = style.ToName() ?? "Unknown";
-            Name = style.ToDescription() ?? "Unknown";
+            Value = style.ToName() ?? "Error";
+            Name = style.ToDescription() ?? "Error";
         }
 
     }
 
     public enum ReminderStyle : int
     {
-        [Description("Unknown")]
-        Unknown = 0,
-        [Description("Bill")]
+        [Description("Error")]
+        Error = 0,
+        [Description("Bill Payment")]
         Bill = 1,
-        [Description("Transfer")]
-        Transfer = 2,
         [Description("Income")]
-        Income = 3
+        Income = 2,
+        [Description("Transfer - Withdrawal")]
+        TransferWithdrawal = 3,
+        [Description("Transfer - Deposit")]
+        TransferDeposit = 4,
     }
 }
