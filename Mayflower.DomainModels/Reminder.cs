@@ -5,19 +5,18 @@ namespace Mayflower.DomainModels
 {
     public class Reminder
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [ForeignKey("TransactionAccount"), Required]
+        [ForeignKey("TransactionAccount")]
         public int TransactionAccountId { get; set; }
 
-        [Required]
         public DateOnly WhenToStart { get; set; }
 
         [Required, Column(TypeName = "decimal(10,2)")]
         public decimal Amount { get; set; }
 
-        [Column("ReminderThemeId"), ForeignKey("_reminderTheme"), Required]
+        [Column("ReminderThemeId"), ForeignKey("_reminderTheme")]
         public ReminderStyle Theme { get; set; }
 
         public string? Description { get; set; }
@@ -26,7 +25,7 @@ namespace Mayflower.DomainModels
 
         public string? PayFrom { get; set; }
 
-        [Column("RecurrenceThemeId"), ForeignKey("_recurrenceTheme"), Required]
+        [Column("RecurrenceThemeId"), ForeignKey("_recurrenceTheme")]
         public RecurrenceStyle RecurrenceTheme { get; set; }
 
         #region Navigation
