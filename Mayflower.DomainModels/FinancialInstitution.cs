@@ -5,10 +5,10 @@ namespace Mayflower.DomainModels
 {
     public class FinancialInstitution
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Required]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Column(TypeName = "varchar(50)"), Required]
+        [Column(TypeName = "varchar(50)")]
         public string Name { get; set; } = string.Empty;
 
         [Column(TypeName = "varchar(50)")]
