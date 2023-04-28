@@ -4,7 +4,7 @@ namespace MEI.Core.Helpers
 {
     public static class EnumExtensions
     {
-        public static string ToDescription(this Enum value)
+        public static string? ToDescription(this Enum value)
         {
             var type = value.GetType();
             var name = Enum.GetName(type, value);
@@ -25,7 +25,7 @@ namespace MEI.Core.Helpers
             return attr?.Description;
         }
 
-        public static string ToName(this Enum value)
+        public static string? ToName(this Enum value)
         {
             var type = value.GetType();
             var name = Enum.GetName(type, value);

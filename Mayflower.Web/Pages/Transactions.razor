@@ -42,7 +42,7 @@ else
 @code {
     private IList<Dto.Transaction>? transactions;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         transactions = bankService.GetTransactions();
     }

@@ -21,8 +21,8 @@ namespace Mayflower.DomainModels
         public ReminderTheme(ReminderStyle style)
         {
             Id = style;
-            Value = style.ToName();
-            Name = style.ToDescription();
+            Value = style.ToName() ?? "Unknown";
+            Name = style.ToDescription() ?? "Unknown";
         }
 
     }

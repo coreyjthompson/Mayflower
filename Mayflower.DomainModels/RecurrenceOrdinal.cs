@@ -21,8 +21,8 @@ namespace Mayflower.DomainModels
         public RecurrenceOrdinal(RecurrencePosition style)
         {
             Id = style;
-            Value = style.ToName();
-            Name = style.ToDescription();
+            Value = style.ToName() ?? "None";
+            Name = style.ToDescription() ?? "None";
         }
 
     }

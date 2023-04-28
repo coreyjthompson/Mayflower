@@ -12,7 +12,7 @@ namespace Mayflower.DomainModels
         public string Number { get; set; } = string.Empty;
 
         [Column("FinancialAccountThemeId"), ForeignKey("_financialAccountTheme")]
-        public FinancialAccountStyle Type { get; set; }
+        public FinancialAccountStyle FinancialAccountTheme { get; set; }
 
         [Column(TypeName = "varchar(255)")]
         public string? NickName { get; set; }
@@ -20,7 +20,7 @@ namespace Mayflower.DomainModels
         public int FinancialInstitutionId { get; set; }
 
         #region Navigation
-        public virtual FinancialInstitution FinancialInstitution { get; set; } = new FinancialInstitution();
+        public virtual FinancialInstitution? FinancialInstitution { get; set; }
 
         public virtual FinancialAccountTheme? _financialAccountTheme { get; set; }
         #endregion

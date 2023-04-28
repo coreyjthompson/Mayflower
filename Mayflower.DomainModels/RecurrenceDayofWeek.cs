@@ -21,9 +21,8 @@ namespace Mayflower.DomainModels
         public RecurrenceDayOfWeek(DayOfWeek day)
         {
             Id = day;
-            Value = day.ToName();
-            Name = day.ToDescription();
-
+            Value = day.ToName() ?? "None";
+            Name = day.ToDescription() ?? "None";
         }
 
     }

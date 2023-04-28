@@ -21,8 +21,8 @@ namespace Mayflower.DomainModels
         public RecurrenceTheme(RecurrenceStyle style)
         {
             Id = style;
-            Value = style.ToName();
-            Name = style.ToDescription();
+            Value = style.ToName() ?? "NoRecurrence";
+            Name = style.ToDescription() ?? "No Recurrence";
         }
 
     }

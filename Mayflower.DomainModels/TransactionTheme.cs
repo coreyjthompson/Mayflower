@@ -22,8 +22,8 @@ namespace Mayflower.DomainModels
         public TransactionTheme(TransactionStyle style)
         {
             Id = style;
-            Value = style.ToName();
-            Name = style.ToDescription();
+            Value = style.ToName() ?? "None";
+            Name = style.ToDescription() ?? "None";
         }
     }
 

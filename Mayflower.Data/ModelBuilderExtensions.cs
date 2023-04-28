@@ -75,18 +75,40 @@ namespace Mayflower.Data
 
             builder.Entity<RecurrenceDayOfWeek>().HasData(recurrenceDaysOfWeek.ToArray());
 
-            // Seed transaction accounts
+
+            // Seed financial institutions
+            var financialInstitution = new FinancialInstitution { Id = 1, Name = "Ally Bank", NickName = "Ally" };
+            builder.Entity<FinancialInstitution>().HasData(financialInstitution);
+
+            // Seed financial accounts
             builder.Entity<FinancialAccount>().HasData(
-                                new FinancialAccount { Id = 1, Number = "1032497347", Type = FinancialAccountStyle.Checking, NickName = "Primary Checking", AccountVendor = "Ally Bank" },
-                                new FinancialAccount { Id = 2, Number = "1054452618", Type = FinancialAccountStyle.Checking, NickName = "Bill Pay Account", AccountVendor = "Ally Bank" },
-                                new FinancialAccount { Id = 3, Number = "2132880598", Type = FinancialAccountStyle.Savings, NickName = "Primary Savings", AccountVendor = "Ally Bank" },
-                                new FinancialAccount { Id = 4, Number = "2133086542", Type = FinancialAccountStyle.Savings, NickName = "Xmas Fund", AccountVendor = "Ally Bank" },
-                                new FinancialAccount { Id = 5, Number = "2141652087", Type = FinancialAccountStyle.Savings, NickName = "Me-want Fund", AccountVendor = "Ally Bank" },
-                                new FinancialAccount { Id = 6, Number = "2144275472", Type = FinancialAccountStyle.Savings, NickName = "Birthday Fund", AccountVendor = "Ally Bank" },
-                                new FinancialAccount { Id = 7, Number = "2144275977", Type = FinancialAccountStyle.Savings, NickName = "Graces Emergency Fund", AccountVendor = "Ally Bank" },
-                                new FinancialAccount { Id = 8, Number = "2148132695", Type = FinancialAccountStyle.Savings, NickName = "Landscaping Fund", AccountVendor = "Ally Bank" }
+                new FinancialAccount { Id = 1, Number = "1032497347", FinancialAccountTheme = FinancialAccountStyle.Checking, NickName = "Primary Checking", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 2, Number = "1054452618", FinancialAccountTheme = FinancialAccountStyle.Checking, NickName = "Bill Pay Account", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 3, Number = "2132880598", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Primary Savings", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 4, Number = "2133086542", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Xmas Fund", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 5, Number = "2141652087", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Me-want Fund", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 6, Number = "2144275472", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Birthday Fund", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 7, Number = "2144275977", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Graces Emergency Fund", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 8, Number = "2148132695", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Landscaping Fund", FinancialInstitutionId = financialInstitution.Id }
 
             );
+
+
+            // Seed reminders
+            var currentDate = DateOnly.FromDateTime(DateTime.Now);
+
+            builder.Entity<Reminder>().HasData(
+                new Reminder { Id = 1, Amount = 235.56m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Pay car payment", ReminderTheme = ReminderStyle.Bill },
+                new Reminder { Id = 2, Amount = 76.25m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(5), Description = "water bill", ReminderTheme = ReminderStyle.Bill },
+                new Reminder { Id = 3, Amount = 650.00m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "mortage payment", ReminderTheme = ReminderStyle.Bill },
+                new Reminder { Id = 4, Amount = 225.00m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "vectren bill", ReminderTheme = ReminderStyle.Bill },
+                new Reminder { Id = 5, Amount = 1200.00m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Pay car payment", ReminderTheme = ReminderStyle.Bill },
+                new Reminder { Id = 6, Amount = 235.56m, TransactionAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Pay car payment", ReminderTheme = ReminderStyle.Bill }
+
+            );
+
+
+
         }
     }
 

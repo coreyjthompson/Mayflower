@@ -17,19 +17,23 @@ namespace Mayflower.DomainModels
         public decimal Amount { get; set; }
 
         [Column("ReminderThemeId"), ForeignKey("_reminderTheme")]
-        public ReminderStyle Theme { get; set; }
+        public ReminderStyle ReminderTheme { get; set; }
 
         public string? Description { get; set; }
 
-        public string? PayTo { get; set; }
+        public int? TransactionToId { get; set; }
 
-        public string? PayFrom { get; set; }
+        public int TransactionFromId { get; set; }
 
         [Column("RecurrenceThemeId"), ForeignKey("_recurrenceTheme")]
         public RecurrenceStyle RecurrenceTheme { get; set; }
 
         #region Navigation
         public virtual FinancialAccount? TransactionAccount { get; set; }
+
+        public virtual FinancialAccount? TransactionTo { get; set; }
+
+        public virtual FinancialAccount? TransactionFrom { get; set; }
 
         public virtual ReminderTheme? _reminderTheme { get; set; }
 

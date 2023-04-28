@@ -13,7 +13,7 @@ namespace Mayflower.DomainModels
         [Column(TypeName = "varchar(25)")]
         public string Value { get; set; } = "None";
 
-        [Column(TypeName = "varchar(25)")]
+        [ Column(TypeName = "varchar(25)")]
         public string Name { get; set; } = "None";
 
         public FinancialAccountTheme() { }   
@@ -21,8 +21,8 @@ namespace Mayflower.DomainModels
         public FinancialAccountTheme(FinancialAccountStyle style)
         {
             Id = style;
-            Value = style.ToName();
-            Name = style.ToDescription();
+            Value = style.ToName() ?? "None";
+            Name = style.ToDescription() ?? "None";
         }
 
     }
