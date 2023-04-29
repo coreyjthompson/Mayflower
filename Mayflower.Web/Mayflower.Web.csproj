@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -15,8 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Mayflower.Data\Mayflower.Data.csproj" />
-    <ProjectReference Include="..\Mayflower.DomainModels\Mayflower.DomainModels.csproj" />
+    <ProjectReference Include="..\Mayflower.Data\Mayflower.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
 using Mayflower.Web.Data;
-using Mayflower.Data.Helpers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Mayflower.Web;
+using Mayflower.Core.Infrastructure.Data.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
