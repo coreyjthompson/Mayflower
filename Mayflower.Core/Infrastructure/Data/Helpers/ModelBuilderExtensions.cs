@@ -65,7 +65,7 @@ namespace Mayflower.Core.Infrastructure.Data.Helpers
 
             builder.Entity<RecurrenceTheme>().HasData(recurrenceThemes.ToArray());
 
-            DomainModels.DayOfWeek[] daysOfWeek = (DomainModels.DayOfWeek[])Enum.GetValues(typeof(DomainModels.DayOfWeek));
+            DayOfWeek[] daysOfWeek = (DayOfWeek[])Enum.GetValues(typeof(DayOfWeek));
             IList<RecurrenceDayOfWeek> recurrenceDaysOfWeek = new List<RecurrenceDayOfWeek>();
 
             foreach (var day in daysOfWeek)
@@ -90,7 +90,6 @@ namespace Mayflower.Core.Infrastructure.Data.Helpers
                 new FinancialAccount { Id = 6, Number = "2144275472", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Birthday Fund", FinancialInstitutionId = financialInstitution.Id },
                 new FinancialAccount { Id = 7, Number = "2144275977", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Graces Emergency Fund", FinancialInstitutionId = financialInstitution.Id },
                 new FinancialAccount { Id = 8, Number = "2148132695", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Landscaping Fund", FinancialInstitutionId = financialInstitution.Id }
-
             );
 
 
@@ -98,62 +97,281 @@ namespace Mayflower.Core.Infrastructure.Data.Helpers
             var currentDate = DateOnly.FromDateTime(DateTime.Now);
 
             builder.Entity<Reminder>().HasData(
-                new Reminder { Id = 1, Amount = 2800.00m, TransactionToAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "iMedia paycheck deposit", ReminderTheme = ReminderStyle.Income },
-                new Reminder { Id = 2, Amount = 2800.00m, TransactionToAccountId = 1, WhenToStart = currentDate.AddDays(16), Description = "iMedia paycheck deposit", ReminderTheme = ReminderStyle.Income },
-                new Reminder { Id = 3, Amount = 76.25m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "water bill", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 4, Amount = 650.00m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "mortage payment", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 5, Amount = 225.00m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(16), Description = "vectren bill", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 6, Amount = 235.56m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(16), Description = "car payment", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 7, Amount = 18.98m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(7), Description = "Netflix", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 8, Amount = 50m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Fuel", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 9, Amount = 50m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(16), Description = "Fuel", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 10, Amount = 100m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Cigarettes", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 11, Amount = 100m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(16), Description = "Cigarettes", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 12, Amount = 120m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Smoke", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 13, Amount = 120m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(16), Description = "Smoke", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 14, Amount = 90m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Child support", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 15, Amount = 90m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(9), Description = "Child support", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 16, Amount = 90m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(16), Description = "Child support", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 17, Amount = 90m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(23), Description = "Child support", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 18, Amount = 2.95m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(2), Description = "Child support fee", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 19, Amount = 2.95m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(9), Description = "Child support fee", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 20, Amount = 2.95m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(16), Description = "Child support fee", ReminderTheme = ReminderStyle.Bill },
-                new Reminder { Id = 21, Amount = 2.95m, TransactionFromAccountId = 1, WhenToStart = currentDate.AddDays(23), Description = "Child support fee", ReminderTheme = ReminderStyle.Bill },
                 new Reminder
                 {
-                    Id = 22,
-                    Amount = 1200.00m,
-                    TransactionFromAccountId = 3,
-                    TransactionToAccountId = 1,
-                    WhenToStart = currentDate.AddDays(14),
-                    Description = "Transfer from Primary Savings|Transfer to Primary Checking",
-                    ReminderTheme = ReminderStyle.Transfer
+                    Id = 1,
+                    Amount = 645.33m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/10/2023"),
+                    Description = "Lakeview Mortgage Payment",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 10,
+                    RecurrenceOrdinal = RecurrencePosition.None,
                 },
                 new Reminder
                 {
-                    Id = 23,
-                    Amount = 100.00m,
-                    TransactionFromAccountId = 1,
-                    TransactionToAccountId = 4,
-                    WhenToStart = currentDate.AddDays(16),
-                    Description = "Transfer from Primary Checking|Transfer to Xmas Fund",
-                    ReminderTheme = ReminderStyle.Transfer
+                    Id = 2,
+                    Amount = 400m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/7/2023"),
+                    Description = "Old National Car Payment",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 7,
+                    RecurrenceOrdinal = RecurrencePosition.None,
                 },
                 new Reminder
                 {
-                    Id = 24,
-                    Amount = 1200.00m,
-                    TransactionFromAccountId = 1,
-                    TransactionToAccountId = 7,
-                    WhenToStart = currentDate.AddDays(16),
-                    Description = "Transfer from Primary Checking|Transfer to Grace's Emergency Fund",
-                    ReminderTheme = ReminderStyle.Transfer
+                    Id = 3,
+                    Amount = 120m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/2/2023"),
+                    Description = "Synchrony/CareCredit Vet Card",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 2,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 4,
+                    Amount = 71m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/24/2023"),
+                    Description = "Astound Broadband Internet",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 24,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 5,
+                    Amount = 12.95m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/8/2023"),
+                    Description = "Walmart +",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 8,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 6,
+                    Amount = 1.99m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/7/2023"),
+                    Description = "Google Cloud Storage",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 7,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 7,
+                    Amount = 27.81m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("4/28/2023"),
+                    Description = "Pretty Litter",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Weekly,
+                    RecurrenceInterval = 3,
+                    RecurrenceDayOfMonth = null,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                    RecurrenceDayOfWeek = DayOfWeek.Friday
+                },
+                new Reminder
+                {
+                    Id = 8,
+                    Amount = 19.99m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/7/2023"),
+                    Description = "Netflix",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 7,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 9,
+                    Amount = 9.99m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/10/2023"),
+                    Description = "Paramount +",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 10,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 10,
+                    Amount = 60m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/15/2023"),
+                    Description = "Google Fi Mobile Phone",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 15,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 11,
+                    Amount = 15.99m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/16/2023"),
+                    Description = "HBO Max",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 16,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 12,
+                    Amount = 15.99m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/17/2023"),
+                    Description = "Amazon Music",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 17,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 13,
+                    Amount = 152.08m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/25/2023"),
+                    Description = "EnerBank/Regions HVAC Payment",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 25,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 14,
+                    Amount = 4.99m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/26/2023"),
+                    Description = "Peacock",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 26,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 15,
+                    Amount = 10.99m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/26/2023"),
+                    Description = "Disney +",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 26,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 16,
+                    Amount = 205.89m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/28/2023"),
+                    Description = "Nelnet Student Loan",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 28,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 17,
+                    Amount = 100m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/20/2023"),
+                    Description = "Chandler Water",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 20,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 18,
+                    Amount = 250m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("5/28/2023"),
+                    Description = "Centerpoint Gas & Electric",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 28,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 19,
+                    Amount = 50m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("4/30/2023"),
+                    Description = "Cricket Wireless",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 30,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 20,
+                    Amount = 91.50m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("4/30/2023"),
+                    Description = "Root Car Insurance",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 1,
+                    RecurrenceDayOfMonth = 30,
+                    RecurrenceOrdinal = RecurrencePosition.None,
+                },
+                new Reminder
+                {
+                    Id = 21,
+                    Amount = 95.00m,
+                    TransactionFromAccountId = 2,
+                    WhenOccurs = DateOnly.Parse("4/30/2023"),
+                    Description = "Waste Management Trash",
+                    ReminderTheme = ReminderStyle.Bill,
+                    RecurrenceTheme = RecurrenceStyle.Monthly,
+                    RecurrenceInterval = 3,
+                    RecurrenceDayOfMonth = 30,
+                    RecurrenceOrdinal = RecurrencePosition.None,
                 }
-
             );
-
-
-
         }
     }
 

@@ -8,7 +8,9 @@ namespace Mayflower.Core.DomainModels
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public DateOnly WhenToStart { get; set; }
+        public DateOnly WhenOccurs { get; set; }
+
+        public DateOnly? WhenExpires { get; set; }
 
         [Required, Column(TypeName = "decimal(10,2)")]
         public decimal Amount { get; set; }
@@ -25,6 +27,17 @@ namespace Mayflower.Core.DomainModels
         [Column("RecurrenceThemeId"), ForeignKey("_recurrenceTheme")]
         public RecurrenceStyle RecurrenceTheme { get; set; }
 
+        public int RecurrenceInterval { get; set; }
+
+        public int? RecurrenceDayOfMonth { get; set; }
+
+        [Column("RecurrenceDayOfWeekId"), ForeignKey("_recurrenceDayOfWeek")]
+        public DayOfWeek? RecurrenceDayOfWeek { get; set; }
+
+        [Column("RecurrenceOrdinalId"), ForeignKey("_recurrenceOrdinal")]
+        public RecurrencePosition RecurrenceOrdinal { get; set; }
+
+
         #region Navigation
         public virtual FinancialAccount? TransactionToAccount { get; set; }
 
@@ -33,6 +46,11 @@ namespace Mayflower.Core.DomainModels
         public virtual ReminderTheme? _reminderTheme { get; set; }
 
         public virtual RecurrenceTheme? _recurrenceTheme { get; set; }
+
+        public virtual RecurrenceDayOfWeek? _recurrenceDayOfWeek { get; set; }
+
+        public virtual RecurrenceOrdinal? _recurrenceOrdinal { get; set; }
+
         #endregion
     }
 }
