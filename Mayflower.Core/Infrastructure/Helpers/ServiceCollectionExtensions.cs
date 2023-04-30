@@ -1,6 +1,5 @@
 ﻿using Mayflower.Core.Infrastructure.Commands.Decorators;
 using Mayflower.Core.Infrastructure.Commands;
-using Mayflower.Core.Infrastructure.Queries.Decorators;
 using Mayflower.Core.Infrastructure.Queries;
 using Mayflower.Core.Validation;
 using Microsoft.Extensions.Configuration;
@@ -13,12 +12,14 @@ using System.Text;
 using System.Threading.Tasks;
 using LazyCache;
 using Mayflower.Core.Infrastructure.Queries.Interfaces;
+using Mayflower.Core.Infrastructure.Queries.Reminders;
+using Mayflower.Core.Infrastructure.Queries.Decorators;
 
 namespace Mayflower.Core.Infrastructure.Helpers
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddCoreInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IQueryProcessor, DynamicQueryProcessor>();
 
@@ -40,13 +41,13 @@ namespace Mayflower.Core.Infrastructure.Helpers
 
             // Use the .AddQueryHandlers extension method to add all queries within a given assembly
             // and include any decorators that should be applied to them all
-            //services.AddQueryHandlers(typeof(FindByIdentityQuery),
-            //    new[]
-            //    {
-            //        typeof(RunTimeLogQueryHandlerDecorator<,>),
-            //        typeof(ValidationQueryHandlerDecorator<,>),
-            //        typeof(CacheQueryHandlerDecorator<,>)
-            //    });
+            services.AddQueryHandlers(typeof(GetAllRemindersByFinancialAccountIdQuery),
+                new[]
+                {
+                    //typeof(RunTimeLogQueryHandlerDecorator<,>),
+                    //typeof(ValidationQueryHandlerDecorator<,>),
+                    typeof(CacheQueryHandlerDecorator<,>)
+                });
 
             // Or add the query individually if they should be different than the rest
 

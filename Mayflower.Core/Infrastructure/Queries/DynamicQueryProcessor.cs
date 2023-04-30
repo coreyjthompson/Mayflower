@@ -12,7 +12,7 @@ namespace Mayflower.Core.Infrastructure.Queries
             _serviceProvider = serviceProvider;
         }
 
-        [DebuggerStepThrough]
+        //[DebuggerStepThrough]
         public async Task<TResult> Execute<TResult>(IQuery<TResult> query)
         {
             if (query == null)
@@ -22,9 +22,9 @@ namespace Mayflower.Core.Infrastructure.Queries
 
             var handlerType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResult));
 
-            dynamic? handler = _serviceProvider.GetService(handlerType);
+            dynamic handler = _serviceProvider.GetService(handlerType);
 
-            return await handler?.HandleAsync((dynamic)query);
+            return await handler.HandleAsync((dynamic) query);
         }
     }
 }

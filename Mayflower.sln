@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mayflower.Web", "Mayflower.Web\Mayflower.Web.csproj", "{2495BF31-2FA2-4CE4-9102-A3E0F7070298}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mayflower.Core", "Mayflower.Data\Mayflower.Core.csproj", "{FBBDDB87-4A88-455B-B939-D6030D78AECD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mayflower.Core", "Mayflower.Core\Mayflower.Core.csproj", "{FBBDDB87-4A88-455B-B939-D6030D78AECD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

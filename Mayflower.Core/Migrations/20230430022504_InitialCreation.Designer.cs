@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Mayflower.Data.Migrations
+namespace Mayflower.Core.Migrations
 {
     [DbContext(typeof(MayflowerContext))]
-    [Migration("20230429002735_InitialCreationAndSeed")]
-    partial class InitialCreationAndSeed
+    [Migration("20230430022504_InitialCreation")]
+    partial class InitialCreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Mayflower.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Mayflower.DomainModels.FinancialAccount", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.FinancialAccount", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -122,7 +122,7 @@ namespace Mayflower.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Mayflower.DomainModels.FinancialAccountTheme", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.FinancialAccountTheme", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -166,7 +166,7 @@ namespace Mayflower.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Mayflower.DomainModels.FinancialInstitution", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.FinancialInstitution", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -194,7 +194,7 @@ namespace Mayflower.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Mayflower.DomainModels.RecurrenceDayOfWeek", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.RecurrenceDayOfWeek", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -262,7 +262,7 @@ namespace Mayflower.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Mayflower.DomainModels.RecurrenceOrdinal", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.RecurrenceOrdinal", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -318,7 +318,7 @@ namespace Mayflower.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Mayflower.DomainModels.RecurrenceTheme", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.RecurrenceTheme", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -362,7 +362,7 @@ namespace Mayflower.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Mayflower.DomainModels.Reminder", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.Reminder", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -414,7 +414,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 2,
                             TransactionToAccountId = 1,
-                            WhenToStart = new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -424,7 +424,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 2,
                             TransactionToAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -434,7 +434,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -444,7 +444,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -454,7 +454,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -464,7 +464,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -474,7 +474,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -484,7 +484,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -494,7 +494,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -504,7 +504,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -514,7 +514,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -524,7 +524,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -534,7 +534,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -544,7 +544,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -554,7 +554,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 8, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -564,7 +564,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -574,7 +574,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 22, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -584,7 +584,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -594,7 +594,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 8, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -604,7 +604,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -614,7 +614,7 @@ namespace Mayflower.Data.Migrations
                             RecurrenceTheme = 0,
                             ReminderTheme = 1,
                             TransactionFromAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 22, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -625,7 +625,7 @@ namespace Mayflower.Data.Migrations
                             ReminderTheme = 3,
                             TransactionFromAccountId = 3,
                             TransactionToAccountId = 1,
-                            WhenToStart = new DateTime(2023, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 13, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -636,7 +636,7 @@ namespace Mayflower.Data.Migrations
                             ReminderTheme = 3,
                             TransactionFromAccountId = 1,
                             TransactionToAccountId = 4,
-                            WhenToStart = new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -647,11 +647,11 @@ namespace Mayflower.Data.Migrations
                             ReminderTheme = 3,
                             TransactionFromAccountId = 1,
                             TransactionToAccountId = 7,
-                            WhenToStart = new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            WhenToStart = new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
-            modelBuilder.Entity("Mayflower.DomainModels.ReminderTheme", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.ReminderTheme", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -695,7 +695,7 @@ namespace Mayflower.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Mayflower.DomainModels.TransactionTheme", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.TransactionTheme", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -733,15 +733,15 @@ namespace Mayflower.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Mayflower.DomainModels.FinancialAccount", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.FinancialAccount", b =>
                 {
-                    b.HasOne("Mayflower.DomainModels.FinancialAccountTheme", "_financialAccountTheme")
+                    b.HasOne("Mayflower.Core.DomainModels.FinancialAccountTheme", "_financialAccountTheme")
                         .WithMany()
                         .HasForeignKey("FinancialAccountTheme")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mayflower.DomainModels.FinancialInstitution", "FinancialInstitution")
+                    b.HasOne("Mayflower.Core.DomainModels.FinancialInstitution", "FinancialInstitution")
                         .WithMany()
                         .HasForeignKey("FinancialInstitutionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -752,25 +752,25 @@ namespace Mayflower.Data.Migrations
                     b.Navigation("_financialAccountTheme");
                 });
 
-            modelBuilder.Entity("Mayflower.DomainModels.Reminder", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.Reminder", b =>
                 {
-                    b.HasOne("Mayflower.DomainModels.RecurrenceTheme", "_recurrenceTheme")
+                    b.HasOne("Mayflower.Core.DomainModels.RecurrenceTheme", "_recurrenceTheme")
                         .WithMany()
                         .HasForeignKey("RecurrenceTheme")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mayflower.DomainModels.ReminderTheme", "_reminderTheme")
+                    b.HasOne("Mayflower.Core.DomainModels.ReminderTheme", "_reminderTheme")
                         .WithMany()
                         .HasForeignKey("ReminderTheme")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mayflower.DomainModels.FinancialAccount", "TransactionFromAccount")
+                    b.HasOne("Mayflower.Core.DomainModels.FinancialAccount", "TransactionFromAccount")
                         .WithMany()
                         .HasForeignKey("TransactionFromAccountId");
 
-                    b.HasOne("Mayflower.DomainModels.FinancialAccount", "TransactionToAccount")
+                    b.HasOne("Mayflower.Core.DomainModels.FinancialAccount", "TransactionToAccount")
                         .WithMany()
                         .HasForeignKey("TransactionToAccountId");
 

@@ -15,7 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Mayflower.Data\Mayflower.Core.csproj" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mayflower.Core\Mayflower.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,193 @@
+﻿@page "/r"
+@page "/r/{AccountId?}"
+
+@using Mayflower.Core.Infrastructure.Queries;
+@using Mayflower.Core.Infrastructure.Queries.Reminders;
+
+@inject IQueryProcessor queries
+@inject NavigationManager navigationManager
+
+<PageTitle>Reminders</PageTitle>
+
+<h1>Reminders</h1>
+
+@if (reminderTableRows == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <EditForm EditContext="@accountIdContext" OnSubmit="@HandleAccountIdSubmitAsync">
+                    <input id="accountId" @bind="AccountId" />
+                    <button type="submit">Submit</button>
+                </EditForm>
+            </div>
+            <div class="col">
+                <EditForm EditContext="@currentFundsContext" OnSubmit="@HandleCurrentFundsSubmit">
+                    <input id="currentFunds" @bind="CurrentAccountFunds" />
+                    <button type="submit">Submit</button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="text-start">Date</th>
+                <th class="text-start">Pay To / Receive From</th>
+                <th class="text-end">Amount</th>
+                <th class="text-end">Closing Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (reminderTableRows.Any())
+            {
+                foreach (var row in reminderTableRows)
+                {
+                    <tr>
+                        <td class="text-start">@row.WhenToStart.ToString("MM/dd/yyyy")</td>
+                        <td class="text-start">@row.Description</td>
+                        <td class="text-end"><span class="@row.TransactionAmountCss">@row.TransactionAmountForDisplay</span></td>
+                        <td class="text-end"><span class="@row.ClosingBalanceCss">@row.ClosingBalanceForDisplay</span></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private const string CURRENCYFORMAT = "#,##0.00";
+
+    private decimal _runningBalance = 0;
+    private IList<Reminder> _reminders = new List<Reminder>();
+
+    private IList<ReminderTableRow>? reminderTableRows;
+    private EditContext accountIdContext = new (string.Empty);
+    private EditContext currentFundsContext = new(0);
+
+    [Parameter]
+    public string? AccountId { get; set; }
+    public decimal CurrentAccountFunds { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _runningBalance = CurrentAccountFunds;
+        accountIdContext = new(AccountId ?? string.Empty);
+        currentFundsContext = new(CurrentAccountFunds);
+
+        await SetReminders();
+
+        reminderTableRows = GetReminderTableRows();
+    }
+
+    private async Task SetReminders()
+    {
+        var accountId = GetConvertedAccountId();
+
+        if (accountId != 0)
+        {
+            // Get the list of reminders that we will use throughtout the page's life
+            var query = new GetAllRemindersByFinancialAccountIdQuery(accountId);
+            _reminders = await queries.Execute(query);
+            _reminders = _reminders.OrderBy(r => r.WhenToStart).ToList();
+        }
+    }
+
+    private IList<ReminderTableRow> GetReminderTableRows()
+    {
+
+        var tableRows = new List<ReminderTableRow>();
+        var accountId = GetConvertedAccountId();
+
+        foreach (var reminder in _reminders)
+        {
+            if (reminder.WhenToStart > DateOnly.FromDateTime(DateTime.Now))
+            {
+                // Only add those that aren't past today
+
+                var transactionAmount = reminder.Amount;
+                var row = new ReminderTableRow
+                    {
+                        Id = reminder.Id,
+                        WhenToStart = reminder.WhenToStart,
+                        TransactionAmountForDisplay = transactionAmount.ToString(CURRENCYFORMAT),
+                        Description = reminder.Description,
+                        ReminderTheme = reminder.ReminderTheme
+                    };
+
+                // Add or remove money from the running balance and set up the corresponding styles
+                if (reminder.TransactionFromAccountId == accountId)
+                {
+                    _runningBalance = _runningBalance - transactionAmount;
+                    row.ClosingBalanceForDisplay = _runningBalance.ToString(CURRENCYFORMAT);
+                    row.TransactionAmountCss = "outgoing";
+                    row.TransactionAmountForDisplay = "-" + row.TransactionAmountForDisplay;
+                }
+                else
+                {
+                    _runningBalance = _runningBalance + transactionAmount;
+                    row.ClosingBalanceForDisplay = _runningBalance.ToString(CURRENCYFORMAT);
+                    row.TransactionAmountCss = "incoming";
+                }
+
+                tableRows.Add(row);
+            }
+        }
+
+        return tableRows;
+    }
+
+    private async Task HandleAccountIdSubmitAsync()
+    {
+        await SetReminders();
+        navigationManager.NavigateTo("/r/" + AccountId);
+
+        reminderTableRows = GetReminderTableRows();
+    }
+
+    private void HandleCurrentFundsSubmit()
+    {
+        _runningBalance = CurrentAccountFunds;
+        reminderTableRows = GetReminderTableRows();
+    }
+
+
+    private int GetConvertedAccountId()
+    {
+        int id;
+
+        if (!string.IsNullOrWhiteSpace(AccountId) && int.TryParse(AccountId, out id))
+        {
+            return id;
+        }
+
+        return 0;
+    }
+
+    private class ReminderTableRow
+    {
+        public int Id { get; set; }
+
+        public DateOnly WhenToStart { get; set; }
+
+        public string TransactionAmountForDisplay { get; set; } = (0).ToString(CURRENCYFORMAT);
+
+        public string? Description { get; set; }
+
+        public ReminderStyle ReminderTheme { get; set; }
+
+        public string ClosingBalanceForDisplay { get; set; } = (0).ToString(CURRENCYFORMAT);
+        
+        public string? TransactionAmountCss { get; set; }
+
+        public string? ClosingBalanceCss { get; set; }
+
+    }
+
+}

@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Mayflower.Data.Migrations
+namespace Mayflower.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreationAndSeed : Migration
+    public partial class InitialCreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -270,30 +270,30 @@ namespace Mayflower.Data.Migrations
                 columns: new[] { "Id", "Amount", "Description", "RecurrenceThemeId", "ReminderThemeId", "TransactionFromAccountId", "TransactionToAccountId", "WhenToStart" },
                 values: new object[,]
                 {
-                    { 1, 2800.00m, "iMedia paycheck deposit", 0, 2, null, 1, new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 2800.00m, "iMedia paycheck deposit", 0, 2, null, 1, new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, 76.25m, "water bill", 0, 1, 1, null, new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, 650.00m, "mortage payment", 0, 1, 1, null, new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, 225.00m, "vectren bill", 0, 1, 1, null, new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 6, 235.56m, "car payment", 0, 1, 1, null, new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 7, 18.98m, "Netflix", 0, 1, 1, null, new DateTime(2023, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 8, 50m, "Fuel", 0, 1, 1, null, new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 9, 50m, "Fuel", 0, 1, 1, null, new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 10, 100m, "Cigarettes", 0, 1, 1, null, new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 11, 100m, "Cigarettes", 0, 1, 1, null, new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 12, 120m, "Smoke", 0, 1, 1, null, new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 13, 120m, "Smoke", 0, 1, 1, null, new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 14, 90m, "Child support", 0, 1, 1, null, new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 15, 90m, "Child support", 0, 1, 1, null, new DateTime(2023, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 16, 90m, "Child support", 0, 1, 1, null, new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 17, 90m, "Child support", 0, 1, 1, null, new DateTime(2023, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 18, 2.95m, "Child support fee", 0, 1, 1, null, new DateTime(2023, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 19, 2.95m, "Child support fee", 0, 1, 1, null, new DateTime(2023, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 20, 2.95m, "Child support fee", 0, 1, 1, null, new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 21, 2.95m, "Child support fee", 0, 1, 1, null, new DateTime(2023, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 22, 1200.00m, "Transfer from Primary Savings|Transfer to Primary Checking", 0, 3, 3, 1, new DateTime(2023, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 23, 100.00m, "Transfer from Primary Checking|Transfer to Xmas Fund", 0, 3, 1, 4, new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 24, 1200.00m, "Transfer from Primary Checking|Transfer to Grace's Emergency Fund", 0, 3, 1, 7, new DateTime(2023, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, 2800.00m, "iMedia paycheck deposit", 0, 2, null, 1, new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 2800.00m, "iMedia paycheck deposit", 0, 2, null, 1, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, 76.25m, "water bill", 0, 1, 1, null, new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, 650.00m, "mortage payment", 0, 1, 1, null, new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, 225.00m, "vectren bill", 0, 1, 1, null, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 6, 235.56m, "car payment", 0, 1, 1, null, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 7, 18.98m, "Netflix", 0, 1, 1, null, new DateTime(2023, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 8, 50m, "Fuel", 0, 1, 1, null, new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 9, 50m, "Fuel", 0, 1, 1, null, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 10, 100m, "Cigarettes", 0, 1, 1, null, new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 11, 100m, "Cigarettes", 0, 1, 1, null, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 12, 120m, "Smoke", 0, 1, 1, null, new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 13, 120m, "Smoke", 0, 1, 1, null, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 14, 90m, "Child support", 0, 1, 1, null, new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 15, 90m, "Child support", 0, 1, 1, null, new DateTime(2023, 5, 8, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 16, 90m, "Child support", 0, 1, 1, null, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 17, 90m, "Child support", 0, 1, 1, null, new DateTime(2023, 5, 22, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 18, 2.95m, "Child support fee", 0, 1, 1, null, new DateTime(2023, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 19, 2.95m, "Child support fee", 0, 1, 1, null, new DateTime(2023, 5, 8, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 20, 2.95m, "Child support fee", 0, 1, 1, null, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 21, 2.95m, "Child support fee", 0, 1, 1, null, new DateTime(2023, 5, 22, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 22, 1200.00m, "Transfer from Primary Savings|Transfer to Primary Checking", 0, 3, 3, 1, new DateTime(2023, 5, 13, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 23, 100.00m, "Transfer from Primary Checking|Transfer to Xmas Fund", 0, 3, 1, 4, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 24, 1200.00m, "Transfer from Primary Checking|Transfer to Grace's Emergency Fund", 0, 3, 1, 7, new DateTime(2023, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.CreateIndex(
