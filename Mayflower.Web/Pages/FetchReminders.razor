@@ -1,11 +1,11 @@
 ﻿@page "/r"
 @page "/r/{AccountId?}"
 
+@inject IQueryProcessor _queries
+@inject NavigationManager _navigationManager
+
 @using Mayflower.Core.Infrastructure.Queries;
 @using Mayflower.Core.Infrastructure.Queries.Reminders;
-
-@inject IQueryProcessor queries
-@inject NavigationManager navigationManager
 
 <PageTitle>Reminders</PageTitle>
 
@@ -94,7 +94,7 @@ else
         {
             // Get the list of reminders that we will use throughtout the page's life
             var query = new GetAllRemindersByFinancialAccountIdQuery(accountId);
-            _reminders = await queries.Execute(query);
+            _reminders = await _queries.Execute(query);
             _reminders = _reminders.OrderBy(r => r.WhenToStart).ToList();
         }
     }
@@ -104,6 +104,9 @@ else
 
         var tableRows = new List<ReminderTableRow>();
         var accountId = GetConvertedAccountId();
+
+        // TODO: Once we have recurrence installed, we will first have to loop reminders to add recurring events 
+        // and then loop the rows to do the math
 
         foreach (var reminder in _reminders)
         {
@@ -146,7 +149,7 @@ else
     private async Task HandleAccountIdSubmitAsync()
     {
         await SetReminders();
-        navigationManager.NavigateTo("/r/" + AccountId);
+        _navigationManager.NavigateTo("/r/" + AccountId);
 
         reminderTableRows = GetReminderTableRows();
     }
