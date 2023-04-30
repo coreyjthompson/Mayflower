@@ -56,7 +56,7 @@ else
                 foreach (var row in reminderTableRows)
                 {
                     <tr>
-                        <td class="text-start">@row.WhenToStart.ToString("MM/dd/yyyy")</td>
+                        <td class="text-start">@row.WhenOccurs.ToString("MM/dd/yyyy")</td>
                         <td class="text-start">@row.Description</td>
                         <td class="text-end"><span class="@row.TransactionAmountCss">@row.TransactionAmountForDisplay</span></td>
                         <td class="text-end"><span class="@row.ClosingBalanceCss">@row.ClosingBalanceForDisplay</span></td>
@@ -102,7 +102,7 @@ else
             // Get the list of reminders that we will use throughtout the page's life
             var query = new GetAllRemindersByFinancialAccountIdQuery(accountId);
             _reminders = await _queries.Execute(query);
-            _reminders = _reminders.OrderBy(r => r.WhenToStart).ToList();
+            _reminders = _reminders.OrderBy(r => r.WhenOccurs).ToList();
         }
     }
 
@@ -117,7 +117,7 @@ else
 
         foreach (var reminder in _reminders)
         {
-            if (reminder.WhenToStart > DateOnly.FromDateTime(DateTime.Now))
+            if (reminder.WhenOccurs > DateOnly.FromDateTime(DateTime.Now))
             {
                 // Only add those that aren't past today
 
@@ -125,7 +125,7 @@ else
                 var row = new ReminderTableRow
                     {
                         Id = reminder.Id,
-                        WhenToStart = reminder.WhenToStart,
+                        WhenOccurs = reminder.WhenOccurs, // Only use this date when its a single occurence
                         TransactionAmountForDisplay = transactionAmount.ToString(CURRENCYFORMAT),
                         Description = reminder.Description,
                         ReminderTheme = reminder.ReminderTheme
@@ -184,7 +184,7 @@ else
     {
         public int Id { get; set; }
 
-        public DateOnly WhenToStart { get; set; }
+        public DateOnly WhenOccurs { get; set; }
 
         public string TransactionAmountForDisplay { get; set; } = (0).ToString(CURRENCYFORMAT);
 
