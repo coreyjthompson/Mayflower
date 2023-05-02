@@ -1,10 +1,10 @@
 ﻿using System.Security;
 using System.Security.Principal;
 using System.Threading.Tasks;
-
+using Mayflower.Core.Infrastructure.Interfaces.Commands;
 using Microsoft.Extensions.Logging;
 
-namespace Mayflower.Core.Infrastructure.Commands.Decorators
+namespace Mayflower.Core.Infrastructure.Decorators.Commands
 {
     public class AuthorizationCommandHandlerDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult> where TCommand : ICommand<TResult>
     {

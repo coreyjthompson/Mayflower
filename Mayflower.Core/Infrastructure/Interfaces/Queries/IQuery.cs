@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mayflower.Core.Infrastructure.Commands
+namespace Mayflower.Core.Infrastructure.Interfaces.Queries
 {
-    public interface ICommand<TResult>
+    public interface IQuery<TResult>
     {
     }
 }

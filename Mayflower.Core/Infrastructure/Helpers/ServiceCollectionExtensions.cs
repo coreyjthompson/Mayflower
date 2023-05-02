@@ -1,6 +1,4 @@
-﻿using Mayflower.Core.Infrastructure.Commands.Decorators;
-using Mayflower.Core.Infrastructure.Commands;
-using Mayflower.Core.Infrastructure.Queries;
+﻿using Mayflower.Core.Infrastructure.Queries;
 using Mayflower.Core.Validation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,9 +9,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using LazyCache;
-using Mayflower.Core.Infrastructure.Queries.Interfaces;
 using Mayflower.Core.Infrastructure.Queries.Reminders;
-using Mayflower.Core.Infrastructure.Queries.Decorators;
+using Mayflower.Core.Infrastructure.Interfaces.Queries;
+using Mayflower.Core.Infrastructure.Decorators.Queries;
+using Mayflower.Core.Infrastructure.Decorators.Commands;
+using Mayflower.Core.Infrastructure.Interfaces.Commands;
 
 namespace Mayflower.Core.Infrastructure.Helpers
 {

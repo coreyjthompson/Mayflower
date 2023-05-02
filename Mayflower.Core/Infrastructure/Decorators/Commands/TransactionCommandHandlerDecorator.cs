@@ -1,8 +1,8 @@
-﻿using Mayflower.Core.Infrastructure.Commands;
+﻿using Mayflower.Core.Infrastructure.Interfaces.Commands;
 using System.Threading.Tasks;
 using System.Transactions;
 
-namespace Mayflower.Core.Infrastructure.Commands.Decorators
+namespace Mayflower.Core.Infrastructure.Decorators.Commands
 {
     public class TransactionCommandHandlerDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult> where TCommand : ICommand<TResult>
     {

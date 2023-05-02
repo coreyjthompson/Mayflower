@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Mayflower.Core.Infrastructure.Interfaces.Commands;
 using Mayflower.Core.Validation;
 
-namespace Mayflower.Core.Infrastructure.Commands.Decorators
+namespace Mayflower.Core.Infrastructure.Decorators.Commands
 {
     public class ValidationCommandHandlerDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult> where TCommand : ICommand<TResult>
     {

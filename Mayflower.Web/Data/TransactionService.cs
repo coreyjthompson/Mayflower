@@ -1,64 +1,61 @@
-using CsvHelper;
+using Mayflower.Core.DomainModels;
+using Microsoft.VisualBasic;
+using QFXparser;
 using System.Globalization;
 
 namespace Mayflower.Web.Data
 {
     public class TransactionService
     {
-        private const string BASEPATH = @"C:\Users\cthompson\Downloads\transactions.csv";
+        private const string BASEPATH = @"D:\Development\GitRepos\Mayflower\TransactionRecordsByAccountId";
+        private const string FILENAME = "transactions.qfx";
 
-        private static readonly int[] Accounts = new[]
+        public Task<FinancialStatement> GetStatementByAccountId(int accountId)
         {
-            1032497347, 1054452618
-        };
+            var file = BASEPATH + @"\" + accountId + @"\" + FILENAME;
 
-        public Task<List<Dto.Transaction>> GetTransactionsAsync()
-        {
-            return Task.FromResult(new List<Dto.Transaction>());
-        }
-
-        public List<Dto.Transaction> GetTransactions()
-        {
-            using StreamReader reader = new StreamReader(BASEPATH);
-            using CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            var records = csv.GetRecords<Dto.Transaction>().ToList();
-
-            return records;
-        }
-
-        public void GetTransactionData()
-        {
-            string filePath = @"C:\Users\cthompson\Downloads\ally-transactions.csv";
-
-            StreamReader? reader = null;
-            if (File.Exists(filePath))
+            if (File.Exists(file))
             {
-                reader = new StreamReader(File.OpenRead(filePath));
-                List<string> listA = new List<string>();
-                while (!reader.EndOfStream)
+                FileParser parser = new FileParser(file);
+                Statement result = parser.BuildStatement();
+
+                return Task.FromResult(MapQfxStatementToFinancialStatement(result));
+            }
+
+            return default!;
+        }
+
+        private FinancialStatement MapQfxStatementToFinancialStatement(QFXparser.Statement statement)
+        {
+            return new FinancialStatement
+            {
+                AccountNumber = statement.AccountNum,
+                LedgerBalance = new Balance
                 {
-                    var line = reader.ReadLine();
-                    var values = line?.Split(',');
-                    if(values != null)
-                    {
-                        foreach (var item in values)
-                        {
-                            listA.Add(item);
-                        }
-                        foreach (var coloumn1 in listA)
-                        {
-                            System.Diagnostics.Debug.WriteLine(coloumn1);
-                        }
-                    }
-                }
-            }
-            else
+                    Amount = statement.LedgerBalance.Amount,
+                    AsOf = statement.LedgerBalance.AsOf
+                },
+                AvailableBalance = new Balance
+                {
+                    Amount = statement.AvailableBalance.Amount,
+                    AsOf = statement.AvailableBalance.AsOf
+                },
+                Transactions = statement.Transactions.Select(t => MapQfxTransactionToTransaction(t)).ToList()
+            };
+        }
+
+        private Core.DomainModels.Transaction MapQfxTransactionToTransaction(QFXparser.Transaction transaction)
+        {
+            return new Core.DomainModels.Transaction
             {
-                System.Diagnostics.Debug.WriteLine("File doesn't exist");
-                //throw new FileNotFoundException(filePath + " does not exist");
-                
-            }
-             
+                Type = transaction.Type,
+                FinancialTransactionId = transaction.TransactionId,
+                Amount = transaction.Amount,
+                Name = transaction.Name,
+                Memo = transaction.Memo,
+                PostedOn = transaction.PostedOn,
+                RefNumber = transaction.RefNumber,
+            };
         }
     }
 }

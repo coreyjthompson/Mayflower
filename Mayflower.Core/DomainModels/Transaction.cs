@@ -5,14 +5,21 @@ namespace Mayflower.Core.DomainModels
 {
     public class Transaction
     {
-        public DateOnly Date { get; set; }
+        public int Id { get; set; }
 
-        public TimeOnly Time { get; set; }
+        public string Type { get; set; } = default!;
 
-        public decimal Amount { get; set; }
+        public string FinancialTransactionId { get; set; } = default!;
 
-        public string Type { get; set; } = "Withdraw";
+        public DateTime PostedOn { get; set; }
 
-        public string Description { get; set; } = "NA";
+        public Decimal Amount { get; set; }
+
+        public string RefNumber { get; set; } = default!;
+
+        public string Name { get; set; } = default!;
+
+        public string Memo { get; set; } = default!;
+
     }
 }

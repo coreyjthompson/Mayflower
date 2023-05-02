@@ -1,6 +1,6 @@
 ﻿@*
     TODO: 
-    + Add date ranges
+    + Add date ranges (30, 60, 90, etc)
     + Add event recurrence
     + Refactor reminders to be events instead
     + Add updateable, individual recurring events
@@ -8,24 +8,25 @@
 @page "/r"
 @page "/r/{AccountId?}"
 
-@inject IQueryProcessor _queries
-@inject NavigationManager _navigationManager
+@inject IQueryProcessor queries
+@inject NavigationManager navigationManager
 
-@using Mayflower.Core.Infrastructure.Queries;
-@using Mayflower.Core.Infrastructure.Queries.Reminders;
+@    using Mayflower.Core.Infrastructure.Queries;
+@    using Mayflower.Core.Infrastructure.Queries.Reminders;
+    using Mayflower.Core.Infrastructure.Interfaces.Queries;
 
 <PageTitle>Reminders</PageTitle>
 
 <h1>Reminders</h1>
 
-@if (reminderTableRows == null)
+@if (tableRows == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
     <div class="container-fluid">
-        <div class="row">
+        <div class="row mb-3">
             <div class="col">
                 <EditForm EditContext="@accountIdContext" OnSubmit="@HandleAccountIdSubmitAsync">
                     <input id="accountId" @bind="AccountId" />
@@ -34,63 +35,73 @@ else
             </div>
             <div class="col">
                 <EditForm EditContext="@currentFundsContext" OnSubmit="@HandleCurrentFundsSubmit">
-                    <input id="currentFunds" @bind="CurrentAccountFunds" />
+                    <input id="currentFunds" @bind="currentFunds" />
                     <button type="submit">Submit</button>
                 </EditForm>
             </div>
         </div>
+        @if (!tableRows.Any())
+        {
+            <div class="alert alert-warning" role="alert">
+                There are no reminders for this account
+            </div>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="text-start">Date</th>
+                        <th class="text-start">Pay To / Receive From</th>
+                        <th class="text-end">Amount</th>
+                        <th class="text-end">Closing Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (tableRows.Any())
+                    {
+                        foreach (var row in tableRows)
+                        {
+                            <tr>
+                                <td class="text-start">@row.WhenOccurs.ToString("MM/dd/yyyy")</td>
+                                <td class="text-start">@row.Description</td>
+                                <td class="text-end"><span class="@row.TransactionAmountCss">@row.TransactionAmountForDisplay</span></td>
+                                <td class="text-end"><span class="@row.ClosingBalanceCss">@row.ClosingBalanceForDisplay</span></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+
     </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="text-start">Date</th>
-                <th class="text-start">Pay To / Receive From</th>
-                <th class="text-end">Amount</th>
-                <th class="text-end">Closing Balance</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (reminderTableRows.Any())
-            {
-                foreach (var row in reminderTableRows)
-                {
-                    <tr>
-                        <td class="text-start">@row.WhenOccurs.ToString("MM/dd/yyyy")</td>
-                        <td class="text-start">@row.Description</td>
-                        <td class="text-end"><span class="@row.TransactionAmountCss">@row.TransactionAmountForDisplay</span></td>
-                        <td class="text-end"><span class="@row.ClosingBalanceCss">@row.ClosingBalanceForDisplay</span></td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
 }
 
 @code {
     private const string CURRENCYFORMAT = "#,##0.00";
 
-    private decimal _runningBalance = 0;
-    private IList<Reminder> _reminders = new List<Reminder>();
-
-    private IList<ReminderTableRow>? reminderTableRows;
+    private decimal runningBalance = 0;
+    private IList<Reminder> reminders = new List<Reminder>();
+    private IList<ReminderTableRow>? tableRows = null;
     private EditContext accountIdContext = new (string.Empty);
     private EditContext currentFundsContext = new(0);
+    private int currentRangeInDays = 60;
+    private decimal currentFunds = 0;
 
     [Parameter]
     public string? AccountId { get; set; }
-    public decimal CurrentAccountFunds { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
-        _runningBalance = CurrentAccountFunds;
-        accountIdContext = new(AccountId ?? string.Empty);
-        currentFundsContext = new(CurrentAccountFunds);
+        this.runningBalance = this.currentFunds;
+        this.accountIdContext = new(AccountId ?? string.Empty);
+        this.currentFundsContext = new(this.currentFunds);
 
         await SetReminders();
 
-        reminderTableRows = GetReminderTableRows();
+        this.tableRows = GetReminderTableRows();
     }
 
     private async Task SetReminders()
@@ -101,53 +112,150 @@ else
         {
             // Get the list of reminders that we will use throughtout the page's life
             var query = new GetAllRemindersByFinancialAccountIdQuery(accountId);
-            _reminders = await _queries.Execute(query);
-            _reminders = _reminders.OrderBy(r => r.WhenOccurs).ToList();
+            this.reminders = await queries.Execute(query);
+            this.reminders = this.reminders.OrderBy(r => r.WhenOccurs).ToList();
         }
     }
 
     private IList<ReminderTableRow> GetReminderTableRows()
     {
+        var tableRows = GetRecurringTableRows().OrderBy(r => r.WhenOccurs).ToList();
+        var accountId = GetConvertedAccountId();
 
+        // Loop each row and sum it all up 
+        foreach (var row in tableRows)
+        {
+            decimal transactionAmount = row.TransactionAmountForMath;
+
+            // Add or remove money from the running balance and set up the corresponding styles
+            if (row.TransactionFromAccountId == accountId)
+            {
+                this.runningBalance = this.runningBalance - transactionAmount;
+                row.ClosingBalanceForDisplay = this.runningBalance.ToString(CURRENCYFORMAT);
+                row.TransactionAmountCss = "outgoing";
+                row.TransactionAmountForDisplay = "-" + transactionAmount.ToString(CURRENCYFORMAT);
+            }
+            else
+            {
+                this.runningBalance = this.runningBalance + transactionAmount;
+                row.ClosingBalanceForDisplay = this.runningBalance.ToString(CURRENCYFORMAT);
+                row.TransactionAmountCss = "incoming";
+                row.TransactionAmountForDisplay = transactionAmount.ToString(CURRENCYFORMAT);
+            }
+        }
+
+        return tableRows;
+    }
+
+    private ReminderTableRow MapBasicReminderDetailsToTableRow(Reminder reminder)
+    {
+        var accountId = GetConvertedAccountId();
+        var row = new ReminderTableRow
+            {
+                Id = reminder.Id,
+                WhenOccurs = reminder.WhenOccurs, 
+                Description = reminder.Description,
+                ReminderTheme = reminder.ReminderTheme,
+                TransactionFromAccountId = reminder.TransactionFromAccountId,
+                TransactionToAccountId = reminder.TransactionToAccountId,
+                TransactionAmountForMath = reminder.Amount
+            };
+
+        return row;
+    }
+
+    private List<ReminderTableRow> GetRecurringTableRows()
+    {
         var tableRows = new List<ReminderTableRow>();
         var accountId = GetConvertedAccountId();
 
-        // TODO: Once we have recurrence installed, we will first have to loop reminders to add recurring events 
-        // and then loop the rows to do the math
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var endDate = startDate.AddDays(this.currentRangeInDays);
 
-        foreach (var reminder in _reminders)
+        foreach (var reminder in this.reminders)
         {
-            if (reminder.WhenOccurs > DateOnly.FromDateTime(DateTime.Now))
+            // Set the date variables that will be used throughout the code
+            DateOnly whenOccurs = reminder.WhenOccurs;
+            DateOnly? whenExpires = reminder.WhenExpires;
+
+            // If it falls within today and activeRangeInDays from now, we want to make at least one row for it
+            if ((whenOccurs <= startDate || (whenOccurs > startDate && whenOccurs <= endDate)) && (whenExpires == null || whenExpires >= endDate))
             {
-                // Only add those that aren't past today
+                // Only add those that start today or before and end after today
 
-                var transactionAmount = reminder.Amount;
-                var row = new ReminderTableRow
-                    {
-                        Id = reminder.Id,
-                        WhenOccurs = reminder.WhenOccurs, // Only use this date when its a single occurence
-                        TransactionAmountForDisplay = transactionAmount.ToString(CURRENCYFORMAT),
-                        Description = reminder.Description,
-                        ReminderTheme = reminder.ReminderTheme
-                    };
+                // Get the recurrences
 
-                // Add or remove money from the running balance and set up the corresponding styles
-                if (reminder.TransactionFromAccountId == accountId)
+                if (reminder.RecurrenceTheme == RecurrenceStyle.NoRecurrence)
                 {
-                    _runningBalance = _runningBalance - transactionAmount;
-                    row.ClosingBalanceForDisplay = _runningBalance.ToString(CURRENCYFORMAT);
-                    row.TransactionAmountCss = "outgoing";
-                    row.TransactionAmountForDisplay = "-" + row.TransactionAmountForDisplay;
+                    // No recurrence - single occurence
+                    var tableRow = MapBasicReminderDetailsToTableRow(reminder);
+                    tableRow.WhenOccurs = reminder.WhenOccurs;
+
+                    tableRows.Add(tableRow);
                 }
                 else
                 {
-                    _runningBalance = _runningBalance + transactionAmount;
-                    row.ClosingBalanceForDisplay = _runningBalance.ToString(CURRENCYFORMAT);
-                    row.TransactionAmountCss = "incoming";
+                    if (reminder.RecurrenceTheme == RecurrenceStyle.Daily)
+                    {
+                        // Daily recurrences
+
+                        // Start the loop at whenOccurs and run until our
+                        // running date is equal to or greater than the end date.
+                        // The running date will be our occurrence's display date
+                        for (DateOnly runningDate = whenOccurs; runningDate <= endDate; runningDate = runningDate.AddDays(reminder.RecurrenceInterval))
+                        {
+                            var tableRow = MapBasicReminderDetailsToTableRow(reminder);
+                            tableRow.WhenOccurs = runningDate;
+
+                            tableRows.Add(tableRow);
+                        }
+
+                    }
+                    else if (reminder.RecurrenceTheme == RecurrenceStyle.Weekly)
+                    {
+                        // Weekly recurrences
+
+                        //RecurrenceInterval X 7 days in a week
+                        var daysTillNextOccurrence = reminder.RecurrenceInterval * 7; 
+
+                        // Start the loop at whenOccurs and run until our
+                        // running date is equal to or greater than the end date.
+                        // The running date will be our occurrence's display date
+                        for (DateOnly runningDate = whenOccurs; runningDate <= endDate; runningDate = runningDate.AddDays(daysTillNextOccurrence))
+                        {
+                            // If this new occurence is between start and end date, add it
+                            if (runningDate >= startDate)
+                            {
+                                var tableRow = MapBasicReminderDetailsToTableRow(reminder);
+                                tableRow.WhenOccurs = runningDate;
+
+                                tableRows.Add(tableRow);
+                            }
+                        }
+                    }
+                    else if (reminder.RecurrenceTheme == RecurrenceStyle.Monthly)
+                    {
+                        // Monthly recurrences
+
+                        // Start the loop at whenOccurs and run until our
+                        // running date is equal to or greater than the end date.
+                        // The running date will be our occurrence's display date
+                        for (DateOnly runningDate = whenOccurs; runningDate <= endDate; runningDate = runningDate.AddMonths(reminder.RecurrenceInterval))
+                        {
+                            // If this new occurence is between start and end date, add it
+                            if (runningDate >= startDate)
+                            {
+                                var tableRow = MapBasicReminderDetailsToTableRow(reminder);
+                                tableRow.WhenOccurs = runningDate;
+
+                                tableRows.Add(tableRow);
+                            }
+                        }
+                    }
+
                 }
 
-                tableRows.Add(row);
-            }
+            }            
         }
 
         return tableRows;
@@ -156,17 +264,16 @@ else
     private async Task HandleAccountIdSubmitAsync()
     {
         await SetReminders();
-        _navigationManager.NavigateTo("/r/" + AccountId);
+        navigationManager.NavigateTo("/r/" + AccountId);
 
-        reminderTableRows = GetReminderTableRows();
+        this.tableRows = GetReminderTableRows();
     }
 
     private void HandleCurrentFundsSubmit()
     {
-        _runningBalance = CurrentAccountFunds;
-        reminderTableRows = GetReminderTableRows();
+        this.runningBalance = this.currentFunds;
+        tableRows = GetReminderTableRows();
     }
-
 
     private int GetConvertedAccountId()
     {
@@ -180,6 +287,20 @@ else
         return 0;
     }
 
+    private bool HasActiveScheduleWithinRange(Reminder reminder)
+    {
+        var start = DateOnly.FromDateTime(DateTime.Now);
+        var end = start.AddDays(this.currentRangeInDays);
+
+        // If it falls within today and activeRangeInDays from now, return true
+        if (reminder.WhenOccurs <= start && (reminder.WhenExpires == null || reminder.WhenExpires > end))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private class ReminderTableRow
     {
         public int Id { get; set; }
@@ -188,16 +309,21 @@ else
 
         public string TransactionAmountForDisplay { get; set; } = (0).ToString(CURRENCYFORMAT);
 
+        public decimal TransactionAmountForMath { get; set; }
+
         public string? Description { get; set; }
 
         public ReminderStyle ReminderTheme { get; set; }
 
         public string ClosingBalanceForDisplay { get; set; } = (0).ToString(CURRENCYFORMAT);
-        
+
         public string? TransactionAmountCss { get; set; }
 
         public string? ClosingBalanceCss { get; set; }
 
+        public int? TransactionFromAccountId { get; set; }
+
+        public int? TransactionToAccountId { get; set; }
     }
 
 }

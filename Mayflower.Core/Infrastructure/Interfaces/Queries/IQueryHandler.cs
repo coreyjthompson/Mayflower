@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mayflower.Core.Infrastructure.Queries.Interfaces
+namespace Mayflower.Core.Infrastructure.Interfaces.Queries
 {
     public interface IQueryHandler<in TQuery, TResult> where TQuery : IQuery<TResult>
     {

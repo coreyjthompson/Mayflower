@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mayflower.Core.Infrastructure.Commands.Decorators
+namespace Mayflower.Core.Infrastructure.Decorators.Commands
 {
     public interface IPostCommitRegistrator
     {

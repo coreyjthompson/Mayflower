@@ -6,9 +6,9 @@ using System.Security.Principal;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
-using Mayflower.Core.Infrastructure.Queries.Interfaces;
+using Mayflower.Core.Infrastructure.Interfaces.Queries;
 
-namespace Mayflower.Core.Infrastructure.Queries.Decorators
+namespace Mayflower.Core.Infrastructure.Decorators.Queries
 {
     public class AuthorizationQueryHandlerDecorator<TQuery, TResult> : IQueryHandler<TQuery, TResult> where TQuery : IQuery<TResult>
     {

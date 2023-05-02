@@ -2,8 +2,9 @@
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using Mayflower.Core.Infrastructure.Interfaces.Commands;
 
-namespace Mayflower.Core.Infrastructure.Commands.Decorators
+namespace Mayflower.Core.Infrastructure.Decorators.Commands
 {
     public class DeadlockRetryCommandHandlerDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult> where TCommand : ICommand<TResult>
     {

@@ -1,6 +1,6 @@
 ﻿using Mayflower.Core.DomainModels;
 using Mayflower.Core.Infrastructure.Data;
-using Mayflower.Core.Infrastructure.Queries.Interfaces;
+using Mayflower.Core.Infrastructure.Interfaces.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mayflower.Core.Infrastructure.Queries.Reminders

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Mayflower.Core.Infrastructure.Commands
+namespace Mayflower.Core.Infrastructure.Interfaces.Commands
 {
     public interface ICommandProcessor
     {

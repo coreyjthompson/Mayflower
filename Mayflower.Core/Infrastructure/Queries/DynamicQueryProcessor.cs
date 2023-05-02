@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Mayflower.Core.Infrastructure.Queries.Interfaces;
+using Mayflower.Core.Infrastructure.Interfaces.Queries;
 
 namespace Mayflower.Core.Infrastructure.Queries
 {

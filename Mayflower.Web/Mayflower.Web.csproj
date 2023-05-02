@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="30.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -15,10 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Dto\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\QFXparser\QFXparser\QFXparser.csproj" />
     <ProjectReference Include="..\Mayflower.Core\Mayflower.Core.csproj" />
   </ItemGroup>
 
