@@ -4,6 +4,7 @@ using Mayflower.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mayflower.Core.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(MayflowerContext))]
-    partial class MayflowerContextModelSnapshot : ModelSnapshot
+    [Migration("20230819040945_AddedBalancePropertiesToAccount")]
+    partial class AddedBalancePropertiesToAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,7 +46,7 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                     b.Property<decimal>("LedgerBalance")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<string>("Nickname")
+                    b.Property<string>("NickName")
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("Number")
@@ -69,7 +72,7 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                             FinancialAccountTheme = 2,
                             FinancialInstitutionId = 1,
                             LedgerBalance = 0m,
-                            Nickname = "Primary Checking",
+                            NickName = "Primary Checking",
                             Number = "1032497347",
                             WhenLastUpdated = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
                         },
@@ -80,7 +83,7 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                             FinancialAccountTheme = 2,
                             FinancialInstitutionId = 1,
                             LedgerBalance = 0m,
-                            Nickname = "Bill Pay Account",
+                            NickName = "Bill Pay Account",
                             Number = "1054452618",
                             WhenLastUpdated = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
                         },
@@ -91,7 +94,7 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                             FinancialAccountTheme = 1,
                             FinancialInstitutionId = 1,
                             LedgerBalance = 0m,
-                            Nickname = "Primary Savings",
+                            NickName = "Primary Savings",
                             Number = "2132880598",
                             WhenLastUpdated = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
                         },
@@ -102,7 +105,7 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                             FinancialAccountTheme = 1,
                             FinancialInstitutionId = 1,
                             LedgerBalance = 0m,
-                            Nickname = "Xmas Fund",
+                            NickName = "Xmas Fund",
                             Number = "2133086542",
                             WhenLastUpdated = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
                         },
@@ -113,7 +116,7 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                             FinancialAccountTheme = 1,
                             FinancialInstitutionId = 1,
                             LedgerBalance = 0m,
-                            Nickname = "Me-want Fund",
+                            NickName = "Me-want Fund",
                             Number = "2141652087",
                             WhenLastUpdated = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
                         },
@@ -124,7 +127,7 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                             FinancialAccountTheme = 1,
                             FinancialInstitutionId = 1,
                             LedgerBalance = 0m,
-                            Nickname = "Birthday Fund",
+                            NickName = "Birthday Fund",
                             Number = "2144275472",
                             WhenLastUpdated = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
                         },
@@ -135,7 +138,7 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                             FinancialAccountTheme = 1,
                             FinancialInstitutionId = 1,
                             LedgerBalance = 0m,
-                            Nickname = "Graces Emergency Fund",
+                            NickName = "Graces Emergency Fund",
                             Number = "2144275977",
                             WhenLastUpdated = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
                         },
@@ -146,7 +149,7 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                             FinancialAccountTheme = 1,
                             FinancialInstitutionId = 1,
                             LedgerBalance = 0m,
-                            Nickname = "Landscaping Fund",
+                            NickName = "Landscaping Fund",
                             Number = "2148132695",
                             WhenLastUpdated = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
                         });
@@ -221,86 +224,6 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                             Id = 1,
                             Name = "Ally Bank",
                             NickName = "Ally"
-                        });
-                });
-
-            modelBuilder.Entity("Mayflower.Core.DomainModels.FinancialTransaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<string>("ExternalTransactionId")
-                        .IsRequired()
-                        .HasColumnType("varchar(125)");
-
-                    b.Property<int>("FinancialAccountId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Memo")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("RefNumber")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<DateTime>("WhenPosted")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FinancialAccountId");
-
-                    b.ToTable("FinancialTransaction", (string)null);
-                });
-
-            modelBuilder.Entity("Mayflower.Core.DomainModels.InactiveReminderReason", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(25)");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("varchar(25)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("InactiveReminderReason", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 0,
-                            Name = "Unknown",
-                            Value = "Unknown"
-                        },
-                        new
-                        {
-                            Id = 1,
-                            Name = "Completion",
-                            Value = "Skipped"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Deleted",
-                            Value = "Complete"
                         });
                 });
 
@@ -480,10 +403,6 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("InactiveReason")
-                        .HasColumnType("int")
-                        .HasColumnName("InactiveReasonId");
-
                     b.Property<int?>("RecurrenceDayOfMonth")
                         .HasColumnType("int");
 
@@ -519,8 +438,6 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("InactiveReason");
 
                     b.HasIndex("RecurrenceDayOfWeek");
 
@@ -812,89 +729,6 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Mayflower.Core.DomainModels.ReminderOccurrence", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal?>("Amount")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ReasonForOccurrence")
-                        .HasColumnType("int")
-                        .HasColumnName("OccurrenceReasonId");
-
-                    b.Property<int>("ReminderId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("WhenCreated")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTime>("WhenOriginallyScheduledToOccur")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("WhenRescheduledToOccur")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReasonForOccurrence");
-
-                    b.HasIndex("ReminderId");
-
-                    b.ToTable("ReminderOccurrence", (string)null);
-                });
-
-            modelBuilder.Entity("Mayflower.Core.DomainModels.ReminderOccurrenceReason", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(25)");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("varchar(25)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ReminderOccurrenceReason", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 0,
-                            Name = "Unknown",
-                            Value = "Unknown"
-                        },
-                        new
-                        {
-                            Id = 1,
-                            Name = "Skip",
-                            Value = "Skip"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Completion",
-                            Value = "Completion"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Edit",
-                            Value = "Edit"
-                        });
-                });
-
             modelBuilder.Entity("Mayflower.Core.DomainModels.ReminderTheme", b =>
                 {
                     b.Property<int>("Id")
@@ -937,6 +771,48 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                             Name = "Transfer",
                             Value = "Transfer"
                         });
+                });
+
+            modelBuilder.Entity("Mayflower.Core.DomainModels.Transaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("ExternalTransactionId")
+                        .IsRequired()
+                        .HasColumnType("varchar(125)");
+
+                    b.Property<int>("FinancialAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Memo")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("RefNumber")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime>("WhenPosted")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FinancialAccountId");
+
+                    b.ToTable("Transaction", (string)null);
                 });
 
             modelBuilder.Entity("Mayflower.Core.DomainModels.TransactionTheme", b =>
@@ -996,23 +872,8 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                     b.Navigation("_financialAccountTheme");
                 });
 
-            modelBuilder.Entity("Mayflower.Core.DomainModels.FinancialTransaction", b =>
-                {
-                    b.HasOne("Mayflower.Core.DomainModels.FinancialAccount", "FinancialAccount")
-                        .WithMany("Transactions")
-                        .HasForeignKey("FinancialAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FinancialAccount");
-                });
-
             modelBuilder.Entity("Mayflower.Core.DomainModels.Reminder", b =>
                 {
-                    b.HasOne("Mayflower.Core.DomainModels.InactiveReminderReason", "_inactiveReason")
-                        .WithMany()
-                        .HasForeignKey("InactiveReason");
-
                     b.HasOne("Mayflower.Core.DomainModels.RecurrenceDayOfWeek", "_recurrenceDayOfWeek")
                         .WithMany()
                         .HasForeignKey("RecurrenceDayOfWeek");
@@ -1047,8 +908,6 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
 
                     b.Navigation("TransactionToAccount");
 
-                    b.Navigation("_inactiveReason");
-
                     b.Navigation("_recurrenceDayOfWeek");
 
                     b.Navigation("_recurrenceOrdinal");
@@ -1058,33 +917,15 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                     b.Navigation("_reminderTheme");
                 });
 
-            modelBuilder.Entity("Mayflower.Core.DomainModels.ReminderOccurrence", b =>
+            modelBuilder.Entity("Mayflower.Core.DomainModels.Transaction", b =>
                 {
-                    b.HasOne("Mayflower.Core.DomainModels.ReminderOccurrenceReason", "_occurrenceReason")
+                    b.HasOne("Mayflower.Core.DomainModels.FinancialAccount", "FinancialAccount")
                         .WithMany()
-                        .HasForeignKey("ReasonForOccurrence")
+                        .HasForeignKey("FinancialAccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mayflower.Core.DomainModels.Reminder", "Reminder")
-                        .WithMany("Occurrences")
-                        .HasForeignKey("ReminderId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Reminder");
-
-                    b.Navigation("_occurrenceReason");
-                });
-
-            modelBuilder.Entity("Mayflower.Core.DomainModels.FinancialAccount", b =>
-                {
-                    b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("Mayflower.Core.DomainModels.Reminder", b =>
-                {
-                    b.Navigation("Occurrences");
+                    b.Navigation("FinancialAccount");
                 });
 #pragma warning restore 612, 618
         }

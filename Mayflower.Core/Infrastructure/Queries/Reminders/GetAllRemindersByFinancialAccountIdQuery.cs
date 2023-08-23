@@ -2,8 +2,6 @@
 using Mayflower.Core.Infrastructure.Data;
 using Mayflower.Core.Infrastructure.Interfaces.Queries;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System.Reflection.PortableExecutable;
 
 namespace Mayflower.Core.Infrastructure.Queries.Reminders
 {
@@ -17,7 +15,7 @@ namespace Mayflower.Core.Infrastructure.Queries.Reminders
         }
 
         public CacheQueryOptions CacheQueryOptions =>
-            new CacheQueryOptions { CacheKey = string.Format("GetAllRemindersByFinancialAccountIdQuery-{0}", ToString()), SlidingExpiration = TimeSpan.FromMinutes(2) };
+            new CacheQueryOptions { CacheKey = string.Format("GetAllRemindersByFinancialAccountIdQuery-{0}", ToString()), SlidingExpiration = TimeSpan.FromMinutes(0) };
 
         public override string ToString()
         {
@@ -29,15 +27,19 @@ namespace Mayflower.Core.Infrastructure.Queries.Reminders
     {
         private readonly MayflowerContext _db;
 
-        public GetAllRemindersByFinancialAccountIdQueryHandler(MayflowerContext db)
+        public GetAllRemindersByFinancialAccountIdQueryHandler(IDbContextFactory<MayflowerContext> dbFactory)
         {
-            _db = db;
+            _db = dbFactory.CreateDbContext();
         }
 
         public async Task<List<Reminder>> HandleAsync(GetAllRemindersByFinancialAccountIdQuery query)
         {
-            return await _db.Reminders.Where(r => r.TransactionFromAccountId == query.Id || 
-                r.TransactionToAccountId == query.Id).ToListAsync();
+            var reminders = await _db.Reminders
+                .Include(r => r.Occurrences)
+                .Where(r => r.TransactionFromAccountId == query.Id || r.TransactionToAccountId == query.Id)
+                .ToListAsync();
+
+            return reminders;
         }
     }
 }

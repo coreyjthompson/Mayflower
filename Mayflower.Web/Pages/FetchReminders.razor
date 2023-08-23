@@ -8,18 +8,19 @@
 @page "/r"
 @page "/r/{AccountId?}"
 
+@using Mayflower.Core.Infrastructure.Queries;
+@using Mayflower.Core.Infrastructure.Queries.Reminders;
+@using Mayflower.Core.Infrastructure.Interfaces.Queries;
+
 @inject IQueryProcessor queries
 @inject NavigationManager navigationManager
 
-@    using Mayflower.Core.Infrastructure.Queries;
-@    using Mayflower.Core.Infrastructure.Queries.Reminders;
-    using Mayflower.Core.Infrastructure.Interfaces.Queries;
 
 <PageTitle>Reminders</PageTitle>
 
 <h1>Reminders</h1>
 
-@if (tableRows == null)
+@if (reminderRows == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -34,13 +35,13 @@ else
                 </EditForm>
             </div>
             <div class="col">
-                <EditForm EditContext="@currentFundsContext" OnSubmit="@HandleCurrentFundsSubmit">
-                    <input id="currentFunds" @bind="currentFunds" />
+                <EditForm EditContext="@availableBalanceContext" OnSubmit="@HandleCurrentFundsSubmit">
+                    <input id="currentFunds" @bind="availableBalance" />
                     <button type="submit">Submit</button>
                 </EditForm>
             </div>
         </div>
-        @if (!tableRows.Any())
+        @if (!reminderRows.Any())
         {
             <div class="alert alert-warning" role="alert">
                 There are no reminders for this account
@@ -58,9 +59,9 @@ else
                     </tr>
                 </thead>
                 <tbody>
-                    @if (tableRows.Any())
+                    @if (reminderRows.Any())
                     {
-                        foreach (var row in tableRows)
+                        foreach (var row in reminderRows)
                         {
                             <tr>
                                 <td class="text-start">@row.WhenOccurs.ToString("MM/dd/yyyy")</td>
@@ -81,13 +82,13 @@ else
 @code {
     private const string CURRENCYFORMAT = "#,##0.00";
 
-    private decimal runningBalance = 0;
     private IList<Reminder> reminders = new List<Reminder>();
-    private IList<ReminderTableRow>? tableRows = null;
+    private IList<ReminderRow>? reminderRows = null;
     private EditContext accountIdContext = new (string.Empty);
-    private EditContext currentFundsContext = new(0);
+    private EditContext availableBalanceContext = new(0);
+    private decimal availableBalance = 0;
     private int currentRangeInDays = 60;
-    private decimal currentFunds = 0;
+    private DateTime whenBalanceLastUpdated = DateTime.Now;
 
     [Parameter]
     public string? AccountId { get; set; }
@@ -95,13 +96,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        this.runningBalance = this.currentFunds;
-        this.accountIdContext = new(AccountId ?? string.Empty);
-        this.currentFundsContext = new(this.currentFunds);
-
+        await SetAvailableBalanceDetails();
         await SetReminders();
 
-        this.tableRows = GetReminderTableRows();
+        this.accountIdContext = new(AccountId ?? string.Empty);
+        this.availableBalanceContext = new(this.availableBalance);
+        this.reminderRows = GetReminderRows();
     }
 
     private async Task SetReminders()
@@ -110,47 +110,66 @@ else
 
         if (accountId != 0)
         {
-            // Get the list of reminders that we will use throughtout the page's life
+            // Get the list of reminders that we will use throughout the page's life
             var query = new GetAllRemindersByFinancialAccountIdQuery(accountId);
             this.reminders = await queries.Execute(query);
+            // Sort them by date before any work is done on them
             this.reminders = this.reminders.OrderBy(r => r.WhenOccurs).ToList();
+
         }
     }
 
-    private IList<ReminderTableRow> GetReminderTableRows()
+    private async Task SetAvailableBalanceDetails()
     {
-        var tableRows = GetRecurringTableRows().OrderBy(r => r.WhenOccurs).ToList();
         var accountId = GetConvertedAccountId();
+        var query = new GetLatestStatementByAccountIdQuery();
+        query.AccountId = accountId;
+        FinancialStatement statement = await this.queries.Execute(query);
+        var amount = statement?.AvailableBalance?.Amount;
+        var asOf = statement?.AvailableBalance?.AsOf;
+
+        if (amount != null && asOf != null)
+        {
+            this.availableBalance = amount.Value;
+            this.whenBalanceLastUpdated = asOf.Value;
+        }
+    }
+
+    private IList<ReminderRow> GetReminderRows()
+    {
+        var reminderRows = GetRecurringRows().OrderBy(r => r.WhenOccurs).ToList();
+        var accountId = GetConvertedAccountId();
+        var runningBalance = this.availableBalance;
 
         // Loop each row and sum it all up 
-        foreach (var row in tableRows)
+        foreach (var row in reminderRows)
         {
             decimal transactionAmount = row.TransactionAmountForMath;
 
             // Add or remove money from the running balance and set up the corresponding styles
             if (row.TransactionFromAccountId == accountId)
             {
-                this.runningBalance = this.runningBalance - transactionAmount;
-                row.ClosingBalanceForDisplay = this.runningBalance.ToString(CURRENCYFORMAT);
+                runningBalance = runningBalance - transactionAmount;
+                row.ClosingBalanceForDisplay = runningBalance.ToString(CURRENCYFORMAT);
                 row.TransactionAmountCss = "outgoing";
                 row.TransactionAmountForDisplay = "-" + transactionAmount.ToString(CURRENCYFORMAT);
             }
             else
             {
-                this.runningBalance = this.runningBalance + transactionAmount;
-                row.ClosingBalanceForDisplay = this.runningBalance.ToString(CURRENCYFORMAT);
+                runningBalance = runningBalance + transactionAmount;
+                row.ClosingBalanceForDisplay = runningBalance.ToString(CURRENCYFORMAT);
                 row.TransactionAmountCss = "incoming";
                 row.TransactionAmountForDisplay = transactionAmount.ToString(CURRENCYFORMAT);
             }
         }
 
-        return tableRows;
+        return reminderRows;
     }
 
-    private ReminderTableRow MapBasicReminderDetailsToTableRow(Reminder reminder)
+    private ReminderRow MapBasicReminderDetailsToTableRow(Reminder reminder)
     {
         var accountId = GetConvertedAccountId();
-        var row = new ReminderTableRow
+        var row = new ReminderRow
             {
                 Id = reminder.Id,
                 WhenOccurs = reminder.WhenOccurs, 
@@ -164,9 +183,9 @@ else
         return row;
     }
 
-    private List<ReminderTableRow> GetRecurringTableRows()
+    private List<ReminderRow> GetRecurringRows()
     {
-        var tableRows = new List<ReminderTableRow>();
+        var reminderRows = new List<ReminderRow>();
         var accountId = GetConvertedAccountId();
 
         var startDate = DateOnly.FromDateTime(DateTime.Now);
@@ -188,10 +207,10 @@ else
                 if (reminder.RecurrenceTheme == RecurrenceStyle.NoRecurrence)
                 {
                     // No recurrence - single occurence
-                    var tableRow = MapBasicReminderDetailsToTableRow(reminder);
-                    tableRow.WhenOccurs = reminder.WhenOccurs;
+                    var row = MapBasicReminderDetailsToTableRow(reminder);
+                    row.WhenOccurs = reminder.WhenOccurs;
 
-                    tableRows.Add(tableRow);
+                    reminderRows.Add(row);
                 }
                 else
                 {
@@ -204,10 +223,10 @@ else
                         // The running date will be our occurrence's display date
                         for (DateOnly runningDate = whenOccurs; runningDate <= endDate; runningDate = runningDate.AddDays(reminder.RecurrenceInterval))
                         {
-                            var tableRow = MapBasicReminderDetailsToTableRow(reminder);
-                            tableRow.WhenOccurs = runningDate;
+                            var row = MapBasicReminderDetailsToTableRow(reminder);
+                            row.WhenOccurs = runningDate;
 
-                            tableRows.Add(tableRow);
+                            reminderRows.Add(row);
                         }
 
                     }
@@ -226,10 +245,10 @@ else
                             // If this new occurence is between start and end date, add it
                             if (runningDate >= startDate)
                             {
-                                var tableRow = MapBasicReminderDetailsToTableRow(reminder);
-                                tableRow.WhenOccurs = runningDate;
+                                var row = MapBasicReminderDetailsToTableRow(reminder);
+                                row.WhenOccurs = runningDate;
 
-                                tableRows.Add(tableRow);
+                                reminderRows.Add(row);
                             }
                         }
                     }
@@ -245,10 +264,10 @@ else
                             // If this new occurence is between start and end date, add it
                             if (runningDate >= startDate)
                             {
-                                var tableRow = MapBasicReminderDetailsToTableRow(reminder);
-                                tableRow.WhenOccurs = runningDate;
+                                var row = MapBasicReminderDetailsToTableRow(reminder);
+                                row.WhenOccurs = runningDate;
 
-                                tableRows.Add(tableRow);
+                                reminderRows.Add(row);
                             }
                         }
                     }
@@ -258,7 +277,7 @@ else
             }            
         }
 
-        return tableRows;
+        return reminderRows;
     }
 
     private async Task HandleAccountIdSubmitAsync()
@@ -266,13 +285,12 @@ else
         await SetReminders();
         navigationManager.NavigateTo("/r/" + AccountId);
 
-        this.tableRows = GetReminderTableRows();
+        this.reminderRows = GetReminderRows();
     }
 
     private void HandleCurrentFundsSubmit()
     {
-        this.runningBalance = this.currentFunds;
-        tableRows = GetReminderTableRows();
+        reminderRows = GetReminderRows();
     }
 
     private int GetConvertedAccountId()
@@ -301,7 +319,7 @@ else
         return false;
     }
 
-    private class ReminderTableRow
+    private class ReminderRow
     {
         public int Id { get; set; }
 

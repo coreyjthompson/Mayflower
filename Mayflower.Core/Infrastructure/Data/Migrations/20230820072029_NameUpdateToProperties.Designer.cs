@@ -4,6 +4,7 @@ using Mayflower.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mayflower.Core.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(MayflowerContext))]
-    partial class MayflowerContextModelSnapshot : ModelSnapshot
+    [Migration("20230820072029_NameUpdateToProperties")]
+    partial class NameUpdateToProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -820,33 +823,29 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("Amount")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ParentId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ReasonForOccurrence")
                         .HasColumnType("int")
                         .HasColumnName("OccurrenceReasonId");
 
-                    b.Property<int>("ReminderId")
+                    b.Property<int?>("ReplacedById")
                         .HasColumnType("int");
 
                     b.Property<DateTimeOffset>("WhenCreated")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime>("WhenOriginallyScheduledToOccur")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("WhenRescheduledToOccur")
+                    b.Property<DateTime>("WhenReminderScheduledToOccur")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ParentId");
+
                     b.HasIndex("ReasonForOccurrence");
 
-                    b.HasIndex("ReminderId");
+                    b.HasIndex("ReplacedById");
 
                     b.ToTable("ReminderOccurrence", (string)null);
                 });
@@ -878,20 +877,20 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Skip",
-                            Value = "Skip"
+                            Name = "Skipped",
+                            Value = "Skipped"
                         },
                         new
                         {
                             Id = 2,
                             Name = "Completion",
-                            Value = "Completion"
+                            Value = "Complete"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Edit",
-                            Value = "Edit"
+                            Name = "Replacement",
+                            Value = "Replaced"
                         });
                 });
 
@@ -1060,19 +1059,25 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Mayflower.Core.DomainModels.ReminderOccurrence", b =>
                 {
+                    b.HasOne("Mayflower.Core.DomainModels.Reminder", "Parent")
+                        .WithMany("OccurrencesAsParent")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Mayflower.Core.DomainModels.ReminderOccurrenceReason", "_occurrenceReason")
                         .WithMany()
                         .HasForeignKey("ReasonForOccurrence")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mayflower.Core.DomainModels.Reminder", "Reminder")
-                        .WithMany("Occurrences")
-                        .HasForeignKey("ReminderId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                    b.HasOne("Mayflower.Core.DomainModels.Reminder", "ReplacedBy")
+                        .WithMany()
+                        .HasForeignKey("ReplacedById");
 
-                    b.Navigation("Reminder");
+                    b.Navigation("Parent");
+
+                    b.Navigation("ReplacedBy");
 
                     b.Navigation("_occurrenceReason");
                 });
@@ -1084,7 +1089,7 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Mayflower.Core.DomainModels.Reminder", b =>
                 {
-                    b.Navigation("Occurrences");
+                    b.Navigation("OccurrencesAsParent");
                 });
 #pragma warning restore 612, 618
         }

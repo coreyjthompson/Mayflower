@@ -4,6 +4,7 @@ using Mayflower.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mayflower.Core.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(MayflowerContext))]
-    partial class MayflowerContextModelSnapshot : ModelSnapshot
+    [Migration("20230821004130_MadeReminderOccurenceDecimalNullable")]
+    partial class MadeReminderOccurenceDecimalNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -833,13 +836,10 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                     b.Property<int>("ReminderId")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("WhenCreated")
+                    b.Property<DateTimeOffset>("WhenOccurred")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTime>("WhenOriginallyScheduledToOccur")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("WhenRescheduledToOccur")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -878,20 +878,20 @@ namespace Mayflower.Core.Infrastructure.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Skip",
-                            Value = "Skip"
+                            Name = "Skipped",
+                            Value = "Skipped"
                         },
                         new
                         {
                             Id = 2,
                             Name = "Completion",
-                            Value = "Completion"
+                            Value = "Complete"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Edit",
-                            Value = "Edit"
+                            Name = "Replacement",
+                            Value = "Replaced"
                         });
                 });
 

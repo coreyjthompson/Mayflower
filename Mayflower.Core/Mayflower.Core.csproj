@@ -23,7 +23,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Commands\" />
+    <Folder Include="Infrastructure\Queries\FinancialAccounts\" />
+    <Folder Include="Infrastructure\Queries\FinancialStatements\" />
+    <Folder Include="Infrastructure\Queries\FinancialTransactions\" />
+    <Folder Include="Infrastructure\Utilities\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\QFXparser\QFXparser\QFXparser.csproj" />
   </ItemGroup>
 
 </Project>

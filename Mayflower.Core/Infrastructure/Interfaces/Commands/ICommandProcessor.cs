@@ -16,7 +16,7 @@ namespace Mayflower.Core.Infrastructure.Interfaces.Commands
             _serviceProvider = serviceProvider;
         }
 
-        [DebuggerStepThrough]
+        //[DebuggerStepThrough]
         public async Task<TResult> Execute<TResult>(ICommand<TResult> command)
         {
             if (command == null)

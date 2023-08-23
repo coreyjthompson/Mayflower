@@ -15,14 +15,25 @@ namespace Mayflower.Core.DomainModels
         public FinancialAccountStyle FinancialAccountTheme { get; set; }
 
         [Column(TypeName = "varchar(255)")]
-        public string? NickName { get; set; }
+        public string? Nickname { get; set; }
 
         public int FinancialInstitutionId { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal LedgerBalance { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal AvailableBalance { get; set; }
+
+        public DateTimeOffset WhenLastUpdated { get; set; }
 
         #region Navigation
         public virtual FinancialInstitution? FinancialInstitution { get; set; }
 
         public virtual FinancialAccountTheme? _financialAccountTheme { get; set; }
+
+        public virtual IList<FinancialTransaction> Transactions { get; set; } = new List<FinancialTransaction>();
+
         #endregion
     }
 

@@ -14,6 +14,7 @@ using Mayflower.Core.Infrastructure.Interfaces.Queries;
 using Mayflower.Core.Infrastructure.Decorators.Queries;
 using Mayflower.Core.Infrastructure.Decorators.Commands;
 using Mayflower.Core.Infrastructure.Interfaces.Commands;
+using Mayflower.Core.Infrastructure.Commands.FinancialTransactions;
 
 namespace Mayflower.Core.Infrastructure.Helpers
 {
@@ -51,16 +52,16 @@ namespace Mayflower.Core.Infrastructure.Helpers
 
             // Or add the query individually if they should be different than the rest
 
-            //// Use the .AddCommandHandlers extension method to add all commands within a given assembly
-            //// and include any decorators that should be applied to them all
-            //services.AddCommandHandlers(typeof(Demo_AddInvoiceCommand),
-            //    new[]
-            //    {
-            //        typeof(RunTimeLogCommandHandlerDecorator<,>),
-            //        typeof(AuditingCommandHandlerDecorator<,>),
-            //        typeof(TransactionCommandHandlerDecorator<,>),
-            //        typeof(PostCommitCommandHandlerDecorator<,>)
-            //    });
+            // Use the .AddCommandHandlers extension method to add all commands within a given assembly
+            // and include any decorators that should be applied to them all
+            services.AddCommandHandlers(typeof(InsertTransactionsCommand),
+                new[]
+                {
+                    typeof(RunTimeLogCommandHandlerDecorator<,>),
+                    //typeof(AuditingCommandHandlerDecorator<,>),
+                    typeof(TransactionCommandHandlerDecorator<,>),
+                    typeof(PostCommitCommandHandlerDecorator<,>)
+                });
 
             // Or add the command individually if they should be different than the rest
             /*services.AddTransient<ICommandHandler<AddInvoiceCommand>, AddInvoiceCommandHandler>();

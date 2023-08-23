@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mayflower.Core.Infrastructure.Data.Helpers
+namespace Mayflower.Core.Infrastructure.Data.Extensions
 {
     public static class ModelBuilderExtensions
     {
@@ -44,6 +44,26 @@ namespace Mayflower.Core.Infrastructure.Data.Helpers
             }
 
             builder.Entity<ReminderTheme>().HasData(reminderThemes.ToArray());
+
+            ReminderOccurrenceCause[] occurenceCauses = (ReminderOccurrenceCause[])Enum.GetValues(typeof(ReminderOccurrenceCause));
+            IList<ReminderOccurrenceReason> occurrenceReasons = new List<ReminderOccurrenceReason>();
+
+            foreach (var style in occurenceCauses)
+            {
+                occurrenceReasons.Add(new ReminderOccurrenceReason(style));
+            }
+
+            builder.Entity<ReminderOccurrenceReason>().HasData(occurrenceReasons.ToArray());
+
+            InactiveReminderCause[] inactiveCauses = (InactiveReminderCause[])Enum.GetValues(typeof(InactiveReminderCause));
+            IList<InactiveReminderReason> inactiveReasons = new List<InactiveReminderReason>();
+
+            foreach (var style in inactiveCauses)
+            {
+                inactiveReasons.Add(new InactiveReminderReason(style));
+            }
+
+            builder.Entity<InactiveReminderReason>().HasData(inactiveReasons.ToArray());
 
             RecurrencePosition[] recurrencePositions = (RecurrencePosition[])Enum.GetValues(typeof(RecurrencePosition));
             IList<RecurrenceOrdinal> recurrenceOrdinals = new List<RecurrenceOrdinal>();
@@ -82,14 +102,14 @@ namespace Mayflower.Core.Infrastructure.Data.Helpers
 
             // Seed financial accounts
             builder.Entity<FinancialAccount>().HasData(
-                new FinancialAccount { Id = 1, Number = "1032497347", FinancialAccountTheme = FinancialAccountStyle.Checking, NickName = "Primary Checking", FinancialInstitutionId = financialInstitution.Id },
-                new FinancialAccount { Id = 2, Number = "1054452618", FinancialAccountTheme = FinancialAccountStyle.Checking, NickName = "Bill Pay Account", FinancialInstitutionId = financialInstitution.Id },
-                new FinancialAccount { Id = 3, Number = "2132880598", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Primary Savings", FinancialInstitutionId = financialInstitution.Id },
-                new FinancialAccount { Id = 4, Number = "2133086542", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Xmas Fund", FinancialInstitutionId = financialInstitution.Id },
-                new FinancialAccount { Id = 5, Number = "2141652087", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Me-want Fund", FinancialInstitutionId = financialInstitution.Id },
-                new FinancialAccount { Id = 6, Number = "2144275472", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Birthday Fund", FinancialInstitutionId = financialInstitution.Id },
-                new FinancialAccount { Id = 7, Number = "2144275977", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Graces Emergency Fund", FinancialInstitutionId = financialInstitution.Id },
-                new FinancialAccount { Id = 8, Number = "2148132695", FinancialAccountTheme = FinancialAccountStyle.Savings, NickName = "Landscaping Fund", FinancialInstitutionId = financialInstitution.Id }
+                new FinancialAccount { Id = 1, Number = "1032497347", FinancialAccountTheme = FinancialAccountStyle.Checking, Nickname = "Primary Checking", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 2, Number = "1054452618", FinancialAccountTheme = FinancialAccountStyle.Checking, Nickname = "Bill Pay Account", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 3, Number = "2132880598", FinancialAccountTheme = FinancialAccountStyle.Savings, Nickname = "Primary Savings", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 4, Number = "2133086542", FinancialAccountTheme = FinancialAccountStyle.Savings, Nickname = "Xmas Fund", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 5, Number = "2141652087", FinancialAccountTheme = FinancialAccountStyle.Savings, Nickname = "Me-want Fund", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 6, Number = "2144275472", FinancialAccountTheme = FinancialAccountStyle.Savings, Nickname = "Birthday Fund", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 7, Number = "2144275977", FinancialAccountTheme = FinancialAccountStyle.Savings, Nickname = "Graces Emergency Fund", FinancialInstitutionId = financialInstitution.Id },
+                new FinancialAccount { Id = 8, Number = "2148132695", FinancialAccountTheme = FinancialAccountStyle.Savings, Nickname = "Landscaping Fund", FinancialInstitutionId = financialInstitution.Id }
             );
 
 

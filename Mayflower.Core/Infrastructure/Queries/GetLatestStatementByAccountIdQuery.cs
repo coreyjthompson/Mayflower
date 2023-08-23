@@ -1,25 +1,45 @@
-using Mayflower.Core.DomainModels;
-using Microsoft.VisualBasic;
+﻿using Mayflower.Core.DomainModels;
+using Mayflower.Core.Infrastructure.Data;
+using Mayflower.Core.Infrastructure.Interfaces.Queries;
 using QFXparser;
-using System.Globalization;
 
-namespace Mayflower.Web.Data
+namespace Mayflower.Core.Infrastructure.Queries
 {
-    public class TransactionService
+    public class GetLatestStatementByAccountIdQuery : IQuery<FinancialStatement>
+    {
+        public GetLatestStatementByAccountIdQuery() { }
+
+        public int AccountId { get; set; }
+
+        public CacheQueryOptions CacheQueryOptions =>
+            new CacheQueryOptions { CacheKey = string.Format("GetLatestStatementByAccountIdQuery-{0}", ToString()), AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(30) };
+
+        public override string ToString()
+        {
+            return string.Format("[AccountId={0}]", AccountId);
+        }
+
+    }
+
+    public class GetLatestStatementByAccountIdQueryHandler : IQueryHandler<GetLatestStatementByAccountIdQuery, FinancialStatement>
     {
         private const string BASEPATH = @"D:\Development\Personal\Mayflower\TransactionRecordsByAccountId";
         private const string FILENAME = "transactions.qfx";
 
-        public Task<FinancialStatement> GetStatementByAccountId(int accountId)
+        public GetLatestStatementByAccountIdQueryHandler()
         {
-            var file = BASEPATH + @"\" + accountId + @"\" + FILENAME;
+        }
+
+        public async Task<FinancialStatement> HandleAsync(GetLatestStatementByAccountIdQuery query)
+        {
+            var file = BASEPATH + @"\" + query.AccountId + @"\" + FILENAME;
 
             if (File.Exists(file))
             {
                 FileParser parser = new FileParser(file);
                 Statement result = parser.BuildStatement();
 
-                return Task.FromResult(MapQfxStatementToFinancialStatement(result));
+                return await Task.FromResult(MapQfxStatementToFinancialStatement(result));
             }
 
             return default!;
@@ -44,9 +64,9 @@ namespace Mayflower.Web.Data
             };
         }
 
-        private Core.DomainModels.FinancialTransaction MapQfxTransactionToTransaction(QFXparser.Transaction transaction)
+        private DomainModels.FinancialTransaction MapQfxTransactionToTransaction(QFXparser.Transaction transaction)
         {
-            return new Core.DomainModels.FinancialTransaction
+            return new DomainModels.FinancialTransaction
             {
                 Type = transaction.Type,
                 ExternalTransactionId = transaction.TransactionId,
@@ -57,5 +77,6 @@ namespace Mayflower.Web.Data
                 RefNumber = transaction.RefNumber,
             };
         }
+
     }
 }

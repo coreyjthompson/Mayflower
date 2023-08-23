@@ -2,10 +2,10 @@ using Mayflower.Web.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Mayflower.Web;
-using Mayflower.Core.Infrastructure.Data.Helpers;
 using Mayflower.Core.Infrastructure.Helpers;
 using LazyCache;
 using Mayflower.Core.Infrastructure.Queries;
+using Mayflower.Core.Infrastructure.Data.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -13,7 +13,7 @@ var configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-
+builder.Services.AddBlazorBootstrap();
 
 builder.Services.AddMayflowerData(configuration);
 builder.Services.AddInfrastructure(configuration);

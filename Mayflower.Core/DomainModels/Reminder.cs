@@ -37,11 +37,15 @@ namespace Mayflower.Core.DomainModels
         [Column("RecurrenceOrdinalId"), ForeignKey("_recurrenceOrdinal")]
         public RecurrencePosition RecurrenceOrdinal { get; set; }
 
+        [Column("InactiveReasonId"), ForeignKey("_inactiveReason")]
+        public InactiveReminderCause? InactiveReason { get; set; }
 
         #region Navigation
         public virtual FinancialAccount? TransactionToAccount { get; set; }
 
         public virtual FinancialAccount? TransactionFromAccount { get; set; }
+
+        public virtual IList<ReminderOccurrence>? Occurrences { get; set; }
 
         public virtual ReminderTheme? _reminderTheme { get; set; }
 
@@ -50,6 +54,8 @@ namespace Mayflower.Core.DomainModels
         public virtual RecurrenceDayOfWeek? _recurrenceDayOfWeek { get; set; }
 
         public virtual RecurrenceOrdinal? _recurrenceOrdinal { get; set; }
+
+        public virtual InactiveReminderReason? _inactiveReason { get; set; }
 
         #endregion
     }

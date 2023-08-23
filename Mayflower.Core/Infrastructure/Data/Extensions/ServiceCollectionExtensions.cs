@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mayflower.Core.Infrastructure.Data.Helpers
+namespace Mayflower.Core.Infrastructure.Data.Extensions
 {
     public static class ServiceCollectionExtensions
     {
@@ -18,7 +18,7 @@ namespace Mayflower.Core.Infrastructure.Data.Helpers
                 throw new Exception("Mayflower database connection string not found at: ConnectionStrings:DefaultConnection");
             }
 
-            return services.AddDbContext<MayflowerContext>(options => options.UseSqlServer(config["ConnectionStrings:DefaultConnection"]));
+            return services.AddDbContextFactory<MayflowerContext>(options => options.UseSqlServer(config["ConnectionStrings:DefaultConnection"]));
         }
     }
 }

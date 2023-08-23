@@ -4,6 +4,7 @@ using Mayflower.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mayflower.Core.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(MayflowerContext))]
-    partial class MayflowerContextModelSnapshot : ModelSnapshot
+    [Migration("20230821045952_UpdateReminderOccurrenceWithNewDateOnly")]
+    partial class UpdateReminderOccurrenceWithNewDateOnly
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
