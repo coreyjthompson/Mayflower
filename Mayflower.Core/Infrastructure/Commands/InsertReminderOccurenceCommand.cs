@@ -1,5 +1,5 @@
 ﻿using Mayflower.Core.DomainModels;
-using Mayflower.Core.Helpers;
+using Mayflower.Core.Extensions;
 using Mayflower.Core.Infrastructure.Data;
 using Mayflower.Core.Infrastructure.Interfaces.Commands;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +48,9 @@ namespace Mayflower.Core.Infrastructure.Commands
                 ReminderId = command.ReminderId,
                 ReasonForOccurrence = command.ReasonForOccurrence,
                 WhenCreated = DateTimeOffset.Now,
-                WhenOriginallyScheduledToOccur = command.WhenOriginallyScheduledToOccur
+                WhenOriginallyScheduledToOccur = command.WhenOriginallyScheduledToOccur,
+                WhenRescheduledToOccur = command.WhenRescheduledToOccur,
+                Amount = command.Amount,
             };
 
             await _db.ReminderOccurrences.AddAsync(occurrence);

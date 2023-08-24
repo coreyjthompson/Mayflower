@@ -8,10 +8,7 @@
 @page "/predictions"
 @page "/predictions/{AccountId?}"
 
-@using Mayflower.Core.Infrastructure.Queries;
-@using Mayflower.Core.Infrastructure.Queries.Reminders;
 @using Mayflower.Core.Infrastructure.Interfaces.Queries;
-@using Mayflower.Core.Infrastructure.Commands;
 @using Mayflower.Core.Infrastructure.Interfaces.Commands;
 
 @inject IQueryProcessor _queries
@@ -94,16 +91,34 @@ else
                             {
                                 <tr>
                                     <td class="text-start align-top">
-                                        <Dropdown>
-                                            <DropdownToggleButton Color="ButtonColor.Primary" Size="Size.Small">Actions</DropdownToggleButton>
-                                            <DropdownMenu>
-                                                <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync("skip", row)'>Skip this occurence</DropdownItem>
-                                                <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync("complete", row)'>Complete this transaction</DropdownItem>
-                                                <DropdownDivider>Dropdown header</DropdownDivider>
-                                                <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync("edit-this", row)'>Edit this occurence only</DropdownItem>
-                                                <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync("edit-all", row)'>Edit this and all occurences forward</DropdownItem>
-                                            </DropdownMenu>
-                                        </Dropdown>
+                                        @if(row.ActionMenu.ShowMenu)
+                                        {
+                                            <Dropdown>
+                                                <DropdownToggleButton Color="ButtonColor.Primary" Size="Size.Small">Actions</DropdownToggleButton>
+                                                <DropdownMenu>
+                                                    @if (row.ActionMenu.ShowSkipButton)
+                                                    {
+                                                        <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.SkipButtonActionName, row)'>@row.ActionMenu.SkipButtonText</DropdownItem>
+                                                    }
+                                                    @if (row.ActionMenu.ShowCompleteButton)
+                                                    {
+                                                        <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.CompleteButtonActionName, row)'>@row.ActionMenu.CompleteButtonText</DropdownItem>
+                                                    }
+                                                    @if (row.ActionMenu.ShowGroupDivider1)
+                                                    {
+                                                        <DropdownDivider>Dropdown header</DropdownDivider>
+                                                    }
+                                                    @if (row.ActionMenu.ShowEditOccurrenceButton)
+                                                    {
+                                                        <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.EditOccurenceButtonActionName, row)'>@row.ActionMenu.EditOccurenceButtonText</DropdownItem>
+                                                    }
+                                                    @if (row.ActionMenu.ShowEditReminderButton)
+                                                    {
+                                                        <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.EditReminderButtonActionName, row)'>@row.ActionMenu.EditReminderButtonText</DropdownItem>
+                                                    }
+                                                </DropdownMenu>
+                                            </Dropdown>
+                                        }
                                     </td>
                                     <td class="text-start align-top">@row.WhenScheduledToOccur.ToString("MM/dd/yyyy")</td>
                                     <td class="text-start align-top">@row.Description</td>

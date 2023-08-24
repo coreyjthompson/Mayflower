@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
-using Mayflower.Core.Helpers;
+using Mayflower.Core.Extensions;
 
 namespace Mayflower.Core.DomainModels
 {

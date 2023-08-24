@@ -1,36 +1,48 @@
 ﻿using System.ComponentModel;
 
-namespace Mayflower.Core.Helpers
+namespace Mayflower.Core.Extensions
 {
     public static class EnumExtensions
     {
-        public static string? ToDescription(this Enum value)
+        public static string ToDescription(this Enum value)
         {
             var type = value.GetType();
             var name = Enum.GetName(type, value);
             if (name == null)
             {
-                return null;
+                return string.Empty;
             }
 
             var field = type.GetField(name);
             if (field == null)
             {
-                return null;
+                return string.Empty;
             }
 
-            var attr =
-                Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+            var attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+            if (attr == null)
+            {
+                return string.Empty;
+            }
 
-            return attr?.Description;
+            return attr.Description;
         }
 
-        public static string? ToName(this Enum value)
+        public static string ToName(this Enum value)
         {
             var type = value.GetType();
-            var name = Enum.GetName(type, value);
+            if(type == null)
+            {
+                return string.Empty;
+            }
 
-            return name ?? null;
+            var name = Enum.GetName(type, value);
+            if (name == null)
+            {
+                return string.Empty;
+            }
+
+            return name;
         }
     }
 }

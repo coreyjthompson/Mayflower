@@ -11,6 +11,7 @@
 @using Mayflower.Core.Infrastructure.Queries;
 @using Mayflower.Core.Infrastructure.Queries.Reminders;
 @using Mayflower.Core.Infrastructure.Interfaces.Queries;
+@using Mayflower.Core.Extensions;
 
 @inject IQueryProcessor queries
 @inject NavigationManager navigationManager
@@ -20,7 +21,7 @@
 
 <h1>Reminders</h1>
 
-@if (reminderRows == null)
+@if (ReminderRows == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -41,7 +42,7 @@ else
                 </EditForm>
             </div>
         </div>
-        @if (!reminderRows.Any())
+        @if (!ReminderRows.Any())
         {
             <div class="alert alert-warning" role="alert">
                 There are no reminders for this account
@@ -52,22 +53,20 @@ else
             <table class="table">
                 <thead>
                     <tr>
-                        <th class="text-start">Date</th>
-                        <th class="text-start">Pay To / Receive From</th>
+                        <th class="text-start">Type</th>
+                        <th class="text-start">Description</th>
                         <th class="text-end">Amount</th>
-                        <th class="text-end">Closing Balance</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if (reminderRows.Any())
+                    @if (ReminderRows.Any())
                     {
-                        foreach (var row in reminderRows)
+                        foreach (var row in ReminderRows)
                         {
                             <tr>
-                                <td class="text-start">@row.WhenOccurs.ToString("MM/dd/yyyy")</td>
+                                <td class="text-start">@row.ReminderTheme</td>
                                 <td class="text-start">@row.Description</td>
                                 <td class="text-end"><span class="@row.TransactionAmountCss">@row.TransactionAmountForDisplay</span></td>
-                                <td class="text-end"><span class="@row.ClosingBalanceCss">@row.ClosingBalanceForDisplay</span></td>
                             </tr>
                         }
                     }
@@ -83,7 +82,8 @@ else
     private const string CURRENCYFORMAT = "#,##0.00";
 
     private IList<Reminder> reminders = new List<Reminder>();
-    private IList<ReminderRow>? reminderRows = null;
+
+    private IList<ReminderRow>? ReminderRows { get; set; }
     private EditContext accountIdContext = new (string.Empty);
     private EditContext availableBalanceContext = new(0);
     private decimal availableBalance = 0;
@@ -101,7 +101,7 @@ else
 
         this.accountIdContext = new(AccountId ?? string.Empty);
         this.availableBalanceContext = new(this.availableBalance);
-        this.reminderRows = GetReminderRows();
+        this.ReminderRows = GetReminderRows();
     }
 
     private async Task SetReminders()
@@ -117,6 +117,22 @@ else
             this.reminders = this.reminders.OrderBy(r => r.WhenOccurs).ToList();
 
         }
+    }
+
+    private async Task<IList<Reminder>> GetReminders()
+    {
+        var accountId = GetConvertedAccountId();
+        var reminders = new List<Reminder>();
+
+        if (accountId != 0)
+        {
+            var query = new GetAllRemindersByFinancialAccountIdQuery(accountId);
+            reminders = await queries.Execute(query);
+            // Sort them by date before any work is done on them
+            reminders = reminders.OrderBy(r => r.WhenOccurs).ToList();
+        }
+
+        return reminders;
     }
 
     private async Task SetAvailableBalanceDetails()
@@ -174,7 +190,7 @@ else
                 Id = reminder.Id,
                 WhenOccurs = reminder.WhenOccurs, 
                 Description = reminder.Description,
-                ReminderTheme = reminder.ReminderTheme,
+                ReminderTheme = reminder.ReminderTheme.ToDescription(),
                 TransactionFromAccountId = reminder.TransactionFromAccountId,
                 TransactionToAccountId = reminder.TransactionToAccountId,
                 TransactionAmountForMath = reminder.Amount
@@ -285,12 +301,12 @@ else
         await SetReminders();
         navigationManager.NavigateTo("/r/" + AccountId);
 
-        this.reminderRows = GetReminderRows();
+        this.ReminderRows = GetReminderRows();
     }
 
     private void HandleCurrentFundsSubmit()
     {
-        reminderRows = GetReminderRows();
+        ReminderRows = GetReminderRows();
     }
 
     private int GetConvertedAccountId()
@@ -331,7 +347,7 @@ else
 
         public string? Description { get; set; }
 
-        public ReminderStyle ReminderTheme { get; set; }
+        public string ReminderTheme { get; set; } = default!;
 
         public string ClosingBalanceForDisplay { get; set; } = (0).ToString(CURRENCYFORMAT);
 
