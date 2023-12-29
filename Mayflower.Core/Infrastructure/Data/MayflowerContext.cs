@@ -58,7 +58,7 @@ namespace Mayflower.Core.Infrastructure.Data
             modelBuilder.Entity<Reminder>(builder =>
             {
                 // Date is a DateOnly property and date on database
-                builder.Property(r => r.WhenOccurs).HasConversion<DateOnlyConverter, DateOnlyComparer>();
+                builder.Property(r => r.WhenBegins).HasConversion<DateOnlyConverter, DateOnlyComparer>();
                 builder.Property(r => r.WhenExpires).HasConversion<DateOnlyConverter, DateOnlyComparer>();
             });
 

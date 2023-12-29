@@ -30,7 +30,6 @@ public partial class FetchPredictions
     private decimal AvailableBalance { get; set; } = 0;
     private Modal EditOccurrenceModal { get; set; } = default !;
 
-    // TODO: add constructor for injection
     [Parameter]
     public string? AccountId { get; set; }
 
@@ -43,7 +42,8 @@ public partial class FetchPredictions
 
     protected override async Task OnParametersSetAsync()
     {
-        await OnInitializedAsync();
+        await SetAvailableBalanceDetailsAsync();
+        PredictionRows = await GetPredictionRowsAsync();
     }
 
     private async Task<IList<PredictionRow>> GetPredictionRowsAsync()
@@ -56,7 +56,7 @@ public partial class FetchPredictions
             var query = new GetAllRemindersByFinancialAccountIdQuery(accountId);
             _reminders = await _queries.Execute(query);
             // Sort them by date before any work is done on them
-            reminders = _reminders.OrderBy(r => r.WhenOccurs).ToList();
+            reminders = _reminders.OrderBy(r => r.WhenBegins).ToList();
         }
 
         var predictions = new List<PredictionRow>();
@@ -66,7 +66,7 @@ public partial class FetchPredictions
         foreach (var reminder in reminders)
         {
             // Set the date variables that will be used throughout the code
-            DateOnly whenOccurs = reminder.WhenOccurs;
+            DateOnly whenOccurs = reminder.WhenBegins;
             DateOnly? whenExpires = reminder.WhenExpires;
             // If it falls within today and activeRangeInDays from now, we want to make at least one row for it
             if ((whenOccurs <= startDate || (whenOccurs > startDate && whenOccurs <= endDate)) && (whenExpires == null || whenExpires >= endDate))
@@ -77,7 +77,7 @@ public partial class FetchPredictions
                 {
                     // No recurrence - single occurence
                     var row = MapBasicReminderDetailsToPredictionRow(reminder);
-                    row.WhenScheduledToOccur = reminder.WhenOccurs;
+                    row.WhenScheduledToOccur = reminder.WhenBegins;
                     predictions.Add(row);
                 }
                 else
@@ -212,7 +212,7 @@ public partial class FetchPredictions
         var row = new PredictionRow
         {
             ReminderId = reminder.Id,
-            WhenScheduledToOccur = reminder.WhenOccurs,
+            WhenScheduledToOccur = reminder.WhenBegins,
             Description = reminder.Description,
             ReminderTheme = reminder.ReminderTheme,
             TransactionFromAccountId = reminder.TransactionFromAccountId,
@@ -254,7 +254,7 @@ public partial class FetchPredictions
         var start = DateOnly.FromDateTime(DateTime.Now);
         var end = start.AddDays(this._currentRangeInDays);
         // If it falls within today and activeRangeInDays from now, return true
-        if (reminder.WhenOccurs <= start && (reminder.WhenExpires == null || reminder.WhenExpires > end))
+        if (reminder.WhenBegins <= start && (reminder.WhenExpires == null || reminder.WhenExpires > end))
         {
             return true;
         }

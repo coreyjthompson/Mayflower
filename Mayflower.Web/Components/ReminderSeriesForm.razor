@@ -1,0 +1,140 @@
+﻿<div>
+    <input type="hidden" @bind="_reminderForm.Id" />
+    <div class="row g-3 mb-3">
+        <div class="col form-floating">
+            <select @onchange="HandleThemeChange" class="form-select" id="reminderThemeSelect">
+                <option value="">@_reminderForm.ReminderThemePlaceholderText</option>
+                @foreach (var day in _reminderStyles)
+                {
+                    if (day.Item1 == _reminderForm.ReminderTheme)
+                    {
+                        <option value="@day.Item2" selected>@day.Item3</option>
+                    }
+                    else
+                    {
+                        <option value="@day.Item2">@day.Item3</option>
+                    }
+                }
+            </select>
+            <label for="reminderThemeSelect">@_reminderForm.ReminderThemeLabelText</label>
+        </div>
+        <div class="col form-floating">
+            <input type="text" class="form-control" @bind="_reminderForm.Description" id="reminderDescriptionInput" placeholder="@_reminderForm.DescriptionPlaceholderText" />
+            <label for="reminderDescriptionInput">@_reminderForm.DescriptionLabelText</label>
+        </div>
+    </div>
+    <div class="row g-3 mb-3">
+        <div class="col form-floating">
+            <CurrencyInput TValue="decimal" @bind-Value="@_reminderForm.Amount" Placeholder="@_reminderForm.AmountPlaceholderText" Locale="en-US" id="reminderAmountInput" />
+            <label for="reminderAmountInput">@_reminderForm.AmountLabelText</label>
+        </div>
+        <div class="col form-floating">
+            <DateInput TValue="DateOnly" @bind-Value="@_reminderForm.WhenBegins" Placeholder="@_reminderForm.WhenBeginsPlaceholderText" id="reminderWhenBegins" />
+            <label for="reminderWhenBegins">@_reminderForm.WhenBeginsLabelText</label>
+        </div>
+    </div>
+    <div class="row g-3 mb-3">
+        <div class="col form-floating">
+            <input type="text" class="form-control" @bind="_reminderForm.RecurrenceInterval" id="reminderIntervalInput" placeholder="@_reminderForm.RecurrenceIntervalPlaceholderText" />
+            <label for="reminderIntervalInput">@_reminderForm.RecurrenceIntervalLabelText</label>
+        </div>
+        <div class="col form-floating">
+            <select @onchange="HandleDayOfMonthChange" class="form-select" id="reminderDayOfMonthToSelect">
+                <option value="">@_reminderForm.RecurrenceDayOfWeekPlaceholderText</option>
+                @foreach (var day in _daysOfMonth)
+                {
+                    if (day == _reminderForm.RecurrenceDayOfMonth)
+                    {
+                        <option value="@day" selected>@day</option>
+                    }
+                    else
+                    {
+                        <option value="@day">@day</option>
+                    }
+                }
+            </select>
+            <label for="reminderDayOfMonthToInput">@_reminderForm.RecurrenceDayOfMonthLabelText</label>
+        </div>
+    </div>
+    <div class="row g-3 mb-3">
+        <div class="col form-floating">
+            <select @onchange="HandleDayOfWeekChange" class="form-select" id="reminderDayOfWeekSelect">
+                <option value="">@_reminderForm.RecurrenceDayOfWeekPlaceholderText</option>
+                @foreach (var day in _daysOfWeek)
+                {
+                    if (day.Item1 == _reminderForm.RecurrenceDayOfWeek)
+                    {
+                        <option value="@day.Item2" selected>@day.Item3</option>
+                    }
+                    else
+                    {
+                        <option value="@day.Item2">@day.Item3</option>
+                    }
+                }
+            </select>
+            <label for="reminderDayOfWeekSelect">@_reminderForm.RecurrenceDayOfWeekLabelText</label>
+        </div>
+        <div class="col form-floating">
+            <select @onchange="HandlePositionChange" class="form-select" id="reminderTransactionFromSelect">
+                <option value="">@_reminderForm.RecurrenceOrdinalPlaceholderText</option>
+                @foreach (var position in _positions)
+                {
+                    if (position.Item1 == _reminderForm.RecurrenceOrdinal)
+                    {
+                        <option value="@position.Item2" selected>@position.Item3</option>
+                    }
+                    else
+                    {
+                        <option value="@position.Item2">@position.Item3</option>
+                    }
+                }
+            </select>
+            <label for="reminderOrdinalInput">@_reminderForm.RecurrenceOrdinalLabelText</label>
+        </div>
+    </div>
+    <div class="row g-3 mb-3">
+        <div class="col form-floating">
+            <select @onchange="HandleTransactionFromAccountChange" class="form-select" id="reminderTransactionFromSelect">
+                <option value="">@_reminderForm.TransactionFromPlaceholderText</option>
+                @if (_accounts != null && _accounts.Any())
+                {
+                    @foreach (var account in _accounts)
+                    {
+                        if (account.Id == _reminderForm.TransactionFromAccountId)
+                        {
+                            <option value="@account.Id" selected>@account.Nickname</option>
+                        }
+                        else
+                        {
+                            <option value="@account.Id">@account.Nickname</option>
+                        }
+                    }
+                }
+            </select>
+            <label for="reminderTransactionFromSelect">@_reminderForm.TransactionFromLabelText</label>
+        </div>
+        <div class="col form-floating">
+            <select @onchange="HandleTransactionToAccountChange" class="form-select" id="reminderTransactionToSelect">
+                <option value="">@_reminderForm.TransactionToPlaceholderText</option>
+                @if (_accounts != null && _accounts.Any())
+                {
+                    @foreach (var account in _accounts)
+                    {
+                        if (account.Id == _reminderForm.TransactionToAccountId)
+                        {
+                            <option value="@account.Id" selected>@account.Nickname</option>
+                        }
+                        else
+                        {
+                            <option value="@account.Id">@account.Nickname</option>
+                        }
+                    }
+                }
+            </select>
+            <label for="reminderTransactionToSelect">@_reminderForm.TransactionToLabelText</label>
+        </div>
+    </div>
+
+</div>
+
+

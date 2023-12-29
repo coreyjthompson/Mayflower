@@ -9,6 +9,8 @@ namespace Mayflower.Core.Infrastructure.Queries.Reminders
     {
         public int Id { get; set; }
 
+        public GetAllRemindersByFinancialAccountIdQuery() { }
+
         public GetAllRemindersByFinancialAccountIdQuery(int id)
         {
             Id = id;

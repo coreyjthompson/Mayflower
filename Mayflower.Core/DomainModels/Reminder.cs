@@ -8,7 +8,7 @@ namespace Mayflower.Core.DomainModels
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public DateOnly WhenOccurs { get; set; }
+        public DateOnly WhenBegins { get; set; }
 
         public DateOnly? WhenExpires { get; set; }
 

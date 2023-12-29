@@ -1,363 +1,254 @@
-﻿@*
-    TODO: 
-    + Add date ranges (30, 60, 90, etc)
-    + Add event recurrence
-    + Refactor reminders to be events instead
-    + Add updateable, individual recurring events
-*@
-@page "/r"
-@page "/r/{AccountId?}"
+﻿@page "/reminders"
+@page "/reminders/{AccountId?}"
 
 @using Mayflower.Core.Infrastructure.Queries;
 @using Mayflower.Core.Infrastructure.Queries.Reminders;
 @using Mayflower.Core.Infrastructure.Interfaces.Queries;
 @using Mayflower.Core.Extensions;
 
-@inject IQueryProcessor queries
-@inject NavigationManager navigationManager
+@inject IQueryProcessor _queries
+@inject NavigationManager _navigationManager
 
 
 <PageTitle>Reminders</PageTitle>
-
-<h1>Reminders</h1>
-
-@if (ReminderRows == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div class="container-fluid">
-        <div class="row mb-3">
-            <div class="col">
-                <EditForm EditContext="@accountIdContext" OnSubmit="@HandleAccountIdSubmitAsync">
-                    <input id="accountId" @bind="AccountId" />
-                    <button type="submit">Submit</button>
-                </EditForm>
-            </div>
-            <div class="col">
-                <EditForm EditContext="@availableBalanceContext" OnSubmit="@HandleCurrentFundsSubmit">
-                    <input id="currentFunds" @bind="availableBalance" />
-                    <button type="submit">Submit</button>
-                </EditForm>
-            </div>
+<div>
+    <header class="d-flex mb-3">
+        <div class="flex-fill text-start align-middle"><h1>Reminders</h1></div>
+        <div class="flex-fill text-end align-middle">
+            <Dropdown>
+                <DropdownToggleButton Color="ButtonColor.Primary" Size="Size.Large">Add</DropdownToggleButton>
+                <DropdownMenu>
+                    <DropdownItem To="#" Type="ButtonType.Link">Bill</DropdownItem>
+                    <DropdownItem To="#" Type="ButtonType.Link">Income</DropdownItem>
+                    <DropdownItem To="#" Type="ButtonType.Link">Transfer</DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
         </div>
-        @if (!ReminderRows.Any())
+    </header>
+    <div>
+        @if (ReminderRows == null)
         {
-            <div class="alert alert-warning" role="alert">
-                There are no reminders for this account
-            </div>
+            <p><em>Loading...</em></p>
         }
         else
         {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th class="text-start">Type</th>
-                        <th class="text-start">Description</th>
-                        <th class="text-end">Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (ReminderRows.Any())
+            <div class="row mb-3">
+                <div class="col-md-6 col-lg-5 col-xl-2 mb-3 mb-lg-0">
+                    @if (Accounts == null)
                     {
-                        foreach (var row in ReminderRows)
-                        {
-                            <tr>
-                                <td class="text-start">@row.ReminderTheme</td>
-                                <td class="text-start">@row.Description</td>
-                                <td class="text-end"><span class="@row.TransactionAmountCss">@row.TransactionAmountForDisplay</span></td>
-                            </tr>
-                        }
+                        <p class="px-3">
+                            <em>Loading list of accounts...</em>
+                        </p>
                     }
-                </tbody>
-            </table>
-        }
-
-    </div>
-
-}
-
-@code {
-    private const string CURRENCYFORMAT = "#,##0.00";
-
-    private IList<Reminder> reminders = new List<Reminder>();
-
-    private IList<ReminderRow>? ReminderRows { get; set; }
-    private EditContext accountIdContext = new (string.Empty);
-    private EditContext availableBalanceContext = new(0);
-    private decimal availableBalance = 0;
-    private int currentRangeInDays = 60;
-    private DateTime whenBalanceLastUpdated = DateTime.Now;
-
-    [Parameter]
-    public string? AccountId { get; set; }
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        await SetAvailableBalanceDetails();
-        await SetReminders();
-
-        this.accountIdContext = new(AccountId ?? string.Empty);
-        this.availableBalanceContext = new(this.availableBalance);
-        this.ReminderRows = GetReminderRows();
-    }
-
-    private async Task SetReminders()
-    {
-        var accountId = GetConvertedAccountId();
-
-        if (accountId != 0)
-        {
-            // Get the list of reminders that we will use throughout the page's life
-            var query = new GetAllRemindersByFinancialAccountIdQuery(accountId);
-            this.reminders = await queries.Execute(query);
-            // Sort them by date before any work is done on them
-            this.reminders = this.reminders.OrderBy(r => r.WhenOccurs).ToList();
-
-        }
-    }
-
-    private async Task<IList<Reminder>> GetReminders()
-    {
-        var accountId = GetConvertedAccountId();
-        var reminders = new List<Reminder>();
-
-        if (accountId != 0)
-        {
-            var query = new GetAllRemindersByFinancialAccountIdQuery(accountId);
-            reminders = await queries.Execute(query);
-            // Sort them by date before any work is done on them
-            reminders = reminders.OrderBy(r => r.WhenOccurs).ToList();
-        }
-
-        return reminders;
-    }
-
-    private async Task SetAvailableBalanceDetails()
-    {
-        var accountId = GetConvertedAccountId();
-        var query = new GetLatestStatementByAccountIdQuery();
-        query.AccountId = accountId;
-        FinancialStatement statement = await this.queries.Execute(query);
-        var amount = statement?.AvailableBalance?.Amount;
-        var asOf = statement?.AvailableBalance?.AsOf;
-
-        if (amount != null && asOf != null)
-        {
-            this.availableBalance = amount.Value;
-            this.whenBalanceLastUpdated = asOf.Value;
-        }
-    }
-
-    private IList<ReminderRow> GetReminderRows()
-    {
-        var reminderRows = GetRecurringRows().OrderBy(r => r.WhenOccurs).ToList();
-        var accountId = GetConvertedAccountId();
-        var runningBalance = this.availableBalance;
-
-        // Loop each row and sum it all up 
-        foreach (var row in reminderRows)
-        {
-            decimal transactionAmount = row.TransactionAmountForMath;
-
-            // Add or remove money from the running balance and set up the corresponding styles
-            if (row.TransactionFromAccountId == accountId)
+                    else
+                    {
+                        <select @onchange="HandleAccountChangeAsync" class="form-select">
+                            <option value="">Select an account</option>
+                            @foreach (var account in Accounts)
+                            {
+                                if (account.Id == GetConvertedAccountId())
+                                {
+                                    <option value="@account.Id" selected>@account.Nickname</option>
+                                }
+                                else
+                                {
+                                    <option value="@account.Id">@account.Nickname</option>
+                                }
+                            }
+                        </select>
+                    }
+                </div>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(AccountId))
             {
-                runningBalance = runningBalance - transactionAmount;
-                row.ClosingBalanceForDisplay = runningBalance.ToString(CURRENCYFORMAT);
-                row.TransactionAmountCss = "outgoing";
-                row.TransactionAmountForDisplay = "-" + transactionAmount.ToString(CURRENCYFORMAT);
-            }
-            else
-            {
-                runningBalance = runningBalance + transactionAmount;
-                row.ClosingBalanceForDisplay = runningBalance.ToString(CURRENCYFORMAT);
-                row.TransactionAmountCss = "incoming";
-                row.TransactionAmountForDisplay = transactionAmount.ToString(CURRENCYFORMAT);
-            }
-        }
-
-        return reminderRows;
-    }
-
-    private ReminderRow MapBasicReminderDetailsToTableRow(Reminder reminder)
-    {
-        var accountId = GetConvertedAccountId();
-        var row = new ReminderRow
-            {
-                Id = reminder.Id,
-                WhenOccurs = reminder.WhenOccurs, 
-                Description = reminder.Description,
-                ReminderTheme = reminder.ReminderTheme.ToDescription(),
-                TransactionFromAccountId = reminder.TransactionFromAccountId,
-                TransactionToAccountId = reminder.TransactionToAccountId,
-                TransactionAmountForMath = reminder.Amount
-            };
-
-        return row;
-    }
-
-    private List<ReminderRow> GetRecurringRows()
-    {
-        var reminderRows = new List<ReminderRow>();
-        var accountId = GetConvertedAccountId();
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var endDate = startDate.AddDays(this.currentRangeInDays);
-
-        foreach (var reminder in this.reminders)
-        {
-            // Set the date variables that will be used throughout the code
-            DateOnly whenOccurs = reminder.WhenOccurs;
-            DateOnly? whenExpires = reminder.WhenExpires;
-
-            // If it falls within today and activeRangeInDays from now, we want to make at least one row for it
-            if ((whenOccurs <= startDate || (whenOccurs > startDate && whenOccurs <= endDate)) && (whenExpires == null || whenExpires >= endDate))
-            {
-                // Only add those that start today or before and end after today
-
-                // Get the recurrences
-
-                if (reminder.RecurrenceTheme == RecurrenceStyle.NoRecurrence)
+                @if (!ReminderRows.Any())
                 {
-                    // No recurrence - single occurence
-                    var row = MapBasicReminderDetailsToTableRow(reminder);
-                    row.WhenOccurs = reminder.WhenOccurs;
-
-                    reminderRows.Add(row);
+                    <div class="alert alert-warning" role="alert">
+                        There are no reminders for this account
+                    </div>
                 }
                 else
                 {
-                    if (reminder.RecurrenceTheme == RecurrenceStyle.Daily)
-                    {
-                        // Daily recurrences
-
-                        // Start the loop at whenOccurs and run until our
-                        // running date is equal to or greater than the end date.
-                        // The running date will be our occurrence's display date
-                        for (DateOnly runningDate = whenOccurs; runningDate <= endDate; runningDate = runningDate.AddDays(reminder.RecurrenceInterval))
-                        {
-                            var row = MapBasicReminderDetailsToTableRow(reminder);
-                            row.WhenOccurs = runningDate;
-
-                            reminderRows.Add(row);
-                        }
-
-                    }
-                    else if (reminder.RecurrenceTheme == RecurrenceStyle.Weekly)
-                    {
-                        // Weekly recurrences
-
-                        //RecurrenceInterval X 7 days in a week
-                        var daysTillNextOccurrence = reminder.RecurrenceInterval * 7; 
-
-                        // Start the loop at whenOccurs and run until our
-                        // running date is equal to or greater than the end date.
-                        // The running date will be our occurrence's display date
-                        for (DateOnly runningDate = whenOccurs; runningDate <= endDate; runningDate = runningDate.AddDays(daysTillNextOccurrence))
-                        {
-                            // If this new occurence is between start and end date, add it
-                            if (runningDate >= startDate)
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th width="1%"></th>
+                                <th class="text-start">Type</th>
+                                <th class="text-start">Description</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ReminderRows.Any())
                             {
-                                var row = MapBasicReminderDetailsToTableRow(reminder);
-                                row.WhenOccurs = runningDate;
-
-                                reminderRows.Add(row);
+                                foreach (var row in ReminderRows)
+                                {
+                                    <tr>
+                                        <td class="text-start align-top">
+                                            <button type="button" class="btn btn-primary btn-sm" @onclick="() => HandleEditReminderButtonClick(row.Id)">Edit</button>
+                                        </td>
+                                        <td class="text-start">@row.ReminderTheme</td>
+                                        <td class="text-start">@row.Description</td>
+                                        <td class="text-end"><span class="@row.AmountCss">@row.AmountForDisplay</span></td>
+                                    </tr>
+                                }
                             }
-                        }
-                    }
-                    else if (reminder.RecurrenceTheme == RecurrenceStyle.Monthly)
-                    {
-                        // Monthly recurrences
-
-                        // Start the loop at whenOccurs and run until our
-                        // running date is equal to or greater than the end date.
-                        // The running date will be our occurrence's display date
-                        for (DateOnly runningDate = whenOccurs; runningDate <= endDate; runningDate = runningDate.AddMonths(reminder.RecurrenceInterval))
-                        {
-                            // If this new occurence is between start and end date, add it
-                            if (runningDate >= startDate)
-                            {
-                                var row = MapBasicReminderDetailsToTableRow(reminder);
-                                row.WhenOccurs = runningDate;
-
-                                reminderRows.Add(row);
-                            }
-                        }
-                    }
-
+                        </tbody>
+                    </table>
                 }
+            }
 
-            }            
+            <Modal @ref="ReminderFormModal" Title="Edit Reminder" IsVerticallyCentered="true">
+                <BodyTemplate>
+                    <EditForm Model="@EditReminderForm" OnSubmit="@HandleReminderFormSubmitAsync" id="editReminderForm">
+                        <input type="hidden" @bind="EditReminderForm.Id" />
+                        <div class="row g-3 mb-3">
+                            <div class="col form-floating">
+                                <select @onchange="HandleThemeChange" class="form-select" id="reminderThemeSelect">
+                                    <option value="">@EditReminderForm.ReminderThemePlaceholderText</option>
+                                    @foreach (var day in ReminderStyles)
+                                    {
+                                        if (day.Item1 == EditReminderForm.ReminderTheme)
+                                        {
+                                            <option value="@day.Item2" selected>@day.Item3</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@day.Item2">@day.Item3</option>
+                                        }
+                                    }
+                                </select>
+                                <label for="reminderThemeSelect">@EditReminderForm.ReminderThemeLabelText</label>
+                            </div>
+                            <div class="col form-floating">
+                                <input type="text" class="form-control" @bind="EditReminderForm.Description" id="reminderDescriptionInput" placeholder="@EditReminderForm.DescriptionPlaceholderText" />
+                                <label for="reminderDescriptionInput">@EditReminderForm.DescriptionLabelText</label>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col form-floating">
+                                <CurrencyInput TValue="decimal" @bind-Value="@EditReminderForm.Amount" Placeholder="@EditReminderForm.AmountPlaceholderText" Locale="en-US" id="reminderAmountInput" />
+                                <label for="reminderAmountInput">@EditReminderForm.AmountLabelText</label>
+                            </div>
+                            <div class="col form-floating">
+                                <DateInput TValue="DateOnly" @bind-Value="@EditReminderForm.WhenBegins" Placeholder="@EditReminderForm.WhenBeginsPlaceholderText" id="reminderWhenBegins" />
+                                <label for="reminderWhenBegins">@EditReminderForm.WhenBeginsLabelText</label>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col form-floating">
+                                <input type="text" class="form-control" @bind="EditReminderForm.RecurrenceInterval" id="reminderIntervalInput" placeholder="@EditReminderForm.RecurrenceIntervalPlaceholderText" />
+                                <label for="reminderIntervalInput">@EditReminderForm.RecurrenceIntervalLabelText</label>
+                            </div>
+                            <div class="col form-floating">
+                                <select @onchange="HandleDayOfMonthChange" class="form-select" id="reminderDayOfMonthToSelect">
+                                    <option value="">@EditReminderForm.RecurrenceDayOfWeekPlaceholderText</option>
+                                    @foreach (var day in DaysOfMonth)
+                                    {
+                                        if (day == EditReminderForm.RecurrenceDayOfMonth)
+                                        {
+                                            <option value="@day" selected>@day</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@day">@day</option>
+                                        }
+                                    }
+                                </select>
+                                <label for="reminderDayOfMonthToInput">@EditReminderForm.RecurrenceDayOfMonthLabelText</label>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col form-floating">
+                                <select @onchange="HandleDayOfWeekChange" class="form-select" id="reminderDayOfWeekSelect">
+                                    <option value="">@EditReminderForm.RecurrenceDayOfWeekPlaceholderText</option>
+                                    @foreach (var day in DaysOfWeek)
+                                    {
+                                        if (day.Item1 == EditReminderForm.RecurrenceDayOfWeek)
+                                        {
+                                            <option value="@day.Item2" selected>@day.Item3</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@day.Item2">@day.Item3</option>
+                                        }
+                                    }
+                                </select>
+                                <label for="reminderDayOfWeekSelect">@EditReminderForm.RecurrenceDayOfWeekLabelText</label>
+                            </div>
+                            <div class="col form-floating">
+                                <select @onchange="HandlePositionChange" class="form-select" id="reminderTransactionFromSelect">
+                                    <option value="">@EditReminderForm.RecurrenceOrdinalPlaceholderText</option>
+                                    @foreach (var position in Positions)
+                                    {
+                                        if (position.Item1 == EditReminderForm.RecurrenceOrdinal)
+                                        {
+                                            <option value="@position.Item2" selected>@position.Item3</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@position.Item2">@position.Item3</option>
+                                        }
+                                    }
+                                </select>
+                                <label for="reminderOrdinalInput">@EditReminderForm.RecurrenceOrdinalLabelText</label>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col form-floating">
+                                <select @onchange="HandleTransactionFromAccountChange" class="form-select" id="reminderTransactionFromSelect">
+                                    <option value="">@EditReminderForm.TransactionFromPlaceholderText</option>
+                                    @if (Accounts != null && Accounts.Any())
+                                    {
+                                        @foreach (var account in Accounts)
+                                        {
+                                            if (account.Id == GetConvertedAccountId())
+                                            {
+                                                <option value="@account.Id" selected>@account.Nickname</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@account.Id">@account.Nickname</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                                <label for="reminderTransactionFromSelect">@EditReminderForm.TransactionFromLabelText</label>
+                            </div>
+                            <div class="col form-floating">
+                                <select @onchange="HandleTransactionToAccountChange" class="form-select" id="reminderTransactionToSelect">
+                                    <option value="">@EditReminderForm.TransactionToPlaceholderText</option>
+                                    @if (Accounts != null && Accounts.Any())
+                                    {
+                                        @foreach (var account in Accounts)
+                                        {
+                                            if (account.Id == @EditReminderForm.TransactionToAccountId)
+                                            {
+                                                <option value="@account.Id" selected>@account.Nickname</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@account.Id">@account.Nickname</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                                <label for="reminderTransactionToSelect">@EditReminderForm.TransactionToLabelText</label>
+                            </div>
+                        </div>
+                    </EditForm>
+                </BodyTemplate>
+                <FooterTemplate>
+                    <Button Color="ButtonColor.Secondary" @onclick="HandleHideReminderModalClickAsync">Cancel</Button>
+                    <Button Color="ButtonColor.Primary" Type="ButtonType.Submit" form="editOccurrenceForm">Save changes</Button>
+                </FooterTemplate>
+            </Modal>
+
         }
+    </div>
+</div>
 
-        return reminderRows;
-    }
 
-    private async Task HandleAccountIdSubmitAsync()
-    {
-        await SetReminders();
-        navigationManager.NavigateTo("/r/" + AccountId);
 
-        this.ReminderRows = GetReminderRows();
-    }
 
-    private void HandleCurrentFundsSubmit()
-    {
-        ReminderRows = GetReminderRows();
-    }
 
-    private int GetConvertedAccountId()
-    {
-        int id;
-
-        if (!string.IsNullOrWhiteSpace(AccountId) && int.TryParse(AccountId, out id))
-        {
-            return id;
-        }
-
-        return 0;
-    }
-
-    private bool HasActiveScheduleWithinRange(Reminder reminder)
-    {
-        var start = DateOnly.FromDateTime(DateTime.Now);
-        var end = start.AddDays(this.currentRangeInDays);
-
-        // If it falls within today and activeRangeInDays from now, return true
-        if (reminder.WhenOccurs <= start && (reminder.WhenExpires == null || reminder.WhenExpires > end))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private class ReminderRow
-    {
-        public int Id { get; set; }
-
-        public DateOnly WhenOccurs { get; set; }
-
-        public string TransactionAmountForDisplay { get; set; } = (0).ToString(CURRENCYFORMAT);
-
-        public decimal TransactionAmountForMath { get; set; }
-
-        public string? Description { get; set; }
-
-        public string ReminderTheme { get; set; } = default!;
-
-        public string ClosingBalanceForDisplay { get; set; } = (0).ToString(CURRENCYFORMAT);
-
-        public string? TransactionAmountCss { get; set; }
-
-        public string? ClosingBalanceCss { get; set; }
-
-        public int? TransactionFromAccountId { get; set; }
-
-        public int? TransactionToAccountId { get; set; }
-    }
-
-}
