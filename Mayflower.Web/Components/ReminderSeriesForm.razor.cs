@@ -1,9 +1,7 @@
-using BlazorBootstrap;
 using global::Microsoft.AspNetCore.Components;
 using Mayflower.Core.DomainModels;
 using Mayflower.Core.Extensions;
-using Microsoft.Identity.Client;
-using System;
+using Mayflower.Core.Infrastructure.Queries;
 
 namespace Mayflower.Web.Components
 {
@@ -19,8 +17,9 @@ namespace Mayflower.Web.Components
         private IList<int> _daysOfMonth = new List<int>();
         private IList<FinancialAccount>? _accounts = null;
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
+            _accounts = await GetAccountsAsync();
             _positions = GetPositions();
             _daysOfWeek = GetDaysOfWeek();
             _daysOfMonth = GetDaysOfMonth();
@@ -30,6 +29,12 @@ namespace Mayflower.Web.Components
         protected override void OnParametersSet()
         {
             SetReminderFormData(Reminder);
+        }
+
+        private async Task<IList<FinancialAccount>> GetAccountsAsync()
+        {
+            var query = new GetFinancialAccountsQuery();
+            return await _queries.Execute(query);
         }
 
         private void SetReminderFormData(Reminder? reminder)

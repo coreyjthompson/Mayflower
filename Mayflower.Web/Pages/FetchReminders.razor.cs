@@ -26,6 +26,7 @@ namespace Mayflower.Web.Pages
 
         [Parameter]
         public string? AccountId { get; set; }
+        protected Reminder SelectedReminder { get; set; } = new Reminder();
 
         protected override async Task OnInitializedAsync()
         {
@@ -223,7 +224,11 @@ namespace Mayflower.Web.Pages
         {
             if (id != 0)
             {
-                await SetReminderFormData(id);
+                var reminder = _reminders.FirstOrDefault(r => r.Id == id);
+                if (reminder != null)
+                {
+                    SelectedReminder = reminder;
+                }
             }
 
             await ReminderFormModal.ShowAsync();

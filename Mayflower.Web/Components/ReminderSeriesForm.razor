@@ -1,4 +1,7 @@
-﻿<div>
+﻿@using Mayflower.Core.Infrastructure.Interfaces.Queries;
+@inject IQueryProcessor _queries
+
+<div>
     <input type="hidden" @bind="_reminderForm.Id" />
     <div class="row g-3 mb-3">
         <div class="col form-floating">
