@@ -19,10 +19,6 @@ namespace Mayflower.Web.Pages
         private IList<ReminderRow>? ReminderRows { get; set; } = null;
         private ReminderForm EditReminderForm { get; set; } = new ReminderForm();
         private Modal ReminderFormModal { get; set; } = default!;
-        private IList<(RecurrencePosition, string, string)> Positions { get; set; } = new List<(RecurrencePosition, string, string)>();
-        private IList<(DayOfWeek, string, string)> DaysOfWeek { get; set; } = new List<(DayOfWeek, string, string)>();
-        private IList<int> DaysOfMonth { get; set; } = new List<int>();
-        private IList<(ReminderStyle, string, string)> ReminderStyles { get; set; } = new List<(ReminderStyle, string, string)>();
 
         [Parameter]
         public string? AccountId { get; set; }
@@ -32,10 +28,6 @@ namespace Mayflower.Web.Pages
         {
             Accounts = await GetAccountsAsync();
             ReminderRows = await GetReminderRowsAsync();
-            Positions = GetPositions();
-            DaysOfWeek = GetDaysOfWeek();
-            DaysOfMonth = GetDaysOfMonth();
-            ReminderStyles = GetReminderStyles();
         }
 
         protected override async Task OnParametersSetAsync()

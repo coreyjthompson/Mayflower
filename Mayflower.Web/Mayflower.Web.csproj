@@ -1,10 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Sass\beagle\**" />
+    <Content Remove="Sass\beagle\**" />
+    <EmbeddedResource Remove="Sass\beagle\**" />
+    <None Remove="Sass\beagle\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="compilerconfig.json" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazor.Bootstrap" Version="1.10.0" />
@@ -17,6 +28,11 @@
   <ItemGroup>
     <Folder Include="Dto\" />
     <Folder Include="Properties\" />
+    <Folder Include="wwwroot\lib\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="compilerconfig.json" />
   </ItemGroup>
 
   <ItemGroup>

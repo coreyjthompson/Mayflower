@@ -6,6 +6,7 @@ using Mayflower.Core.Infrastructure.Helpers;
 using LazyCache;
 using Mayflower.Core.Infrastructure.Queries;
 using Mayflower.Core.Infrastructure.Data.Extensions;
+using Mayflower.Web.NotificationServices;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -20,6 +21,9 @@ builder.Services.AddInfrastructure(configuration);
 
 // Add custom data services
 builder.Services.AddSingleton<TransactionService>();
+
+// Add custom notification services
+builder.Services.AddScoped<HeaderChangeNotificationService>();
 
 builder.Services.AddOptions().Configure<ApplicationOptions>(configuration.GetSection(nameof(ApplicationOptions)));
 
