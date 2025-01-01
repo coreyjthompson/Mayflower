@@ -11,12 +11,15 @@ using Microsoft.Identity.Client;
 
 namespace Mayflower.Web.Pages
 {
-    public partial class UpcomingTransactions
+    public partial class Reminders
     {
 
         private const string PAGE_TITLE = "Bills & Payments";
 
         private string? _rangeInDays = "30";
+        private Modal _reminderFormModal = new Modal();
+        private Reminder _selectedReminder { get; set; } = new Reminder();
+
         protected override void OnInitialized()
         {
             UpdateHeader();
@@ -24,7 +27,7 @@ namespace Mayflower.Web.Pages
 
         private void UpdateHeader()
         {
-            _headerChangeNotificationService.SetTitle(PAGE_TITLE);
+            _headerChangeNotificationService.SetPageProperties(PAGE_TITLE);
         }
 
         private void HandleDayRangeChange(ChangeEventArgs e)
@@ -35,6 +38,26 @@ namespace Mayflower.Web.Pages
                 _rangeInDays = selectedRange.ToString();
             }
         }
+
+        private async Task HandleHideReminderModalClickAsync()
+        {
+            await _reminderFormModal.HideAsync();
+        }
+
+        private async Task HandleAddReminderButtonClick()
+        {
+            _selectedReminder = new Reminder();
+            _selectedReminder.WhenBegins = DateOnly.FromDateTime(DateTime.Now);
+            await _reminderFormModal.ShowAsync();
+        }
+
+        private async Task HandleSaveReminderClickAsync()
+        {
+            // Add a new reminder
+
+            await _reminderFormModal.HideAsync();
+        }
+
 
     }
 }

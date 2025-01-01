@@ -19,7 +19,6 @@
 			display: none;
 		}
 	}
-
 	// Collapsed left sidebar style
 	.be-collapsible-sidebar-collapsed & {
 		width: $left-sidebar-collapsed-width;
@@ -58,11 +57,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		padding-top: 8px;
-
-		.be-collapsible-sidebar-collapsed & {
-			padding-top: 20px;
-		}
+		padding-top: 20px;
 	}
 
 	.left-sidebar-toggle {
@@ -93,6 +88,42 @@
 			display: block;
 		}
 	}
+	// logo
+	.left-sidebar-brand {
+		line-height: $top-header-height;
+		height: $top-header-height;
+		width: $left-sidebar-width;
+		background-image: url("#{contrast-image-selector($top-header-bg, $logo-bg)}");
+		background-repeat: no-repeat;
+		background-position: 7px center;
+		padding: 0 $logo-padding;
+		margin: 0;
+		display: block;
+		color: $body-color;
+		//Retina logo
+		@media #{$retina} {
+			background-image: url("#{contrast-image-selector($top-header-bg, $logo-bg-2x)}");
+			background-size: $logo-width $logo-height;
+		}
+		//Phone style
+		@include tablet {
+			display: none;
+		}
+		//Reduce content spacing on tablet res.
+		@include laptop {
+			margin-right: 10px;
+		}
+
+		span {
+			font-size: 2.5rem;
+		}
+
+		.be-collapsible-sidebar-collapsed & {
+			span {
+				display: none;
+			}
+		}
+	}
 
 	.sidebar-elements {
 		margin: 0;
@@ -111,7 +142,7 @@
 					padding: 40px 0 0;
 					height: 0;
 					overflow: hidden;
-	    			text-indent: -9999px;
+					text-indent: -9999px;
 
 					&:first-child {
 						display: none;
@@ -119,7 +150,6 @@
 				}
 			}
 		}
-
 		//First Level
 		> li {
 			list-style: none;
@@ -133,7 +163,6 @@
 				text-overflow: ellipsis;
 				overflow: hidden;
 				white-space: nowrap;
-
 				// Fix for IE11 overflow ellipsis
 				.be-collapsible-sidebar-collapsed & {
 					text-overflow: clip;
@@ -146,9 +175,25 @@
 					margin-right: 9px;
 					text-align: center;
 					vertical-align: middle;
+
+					& + .indicator {
+						background-color: #4285f4;
+						border-radius: 50%;
+						display: block;
+						height: 6px;
+						width: 6px;
+						position: absolute;
+						top: 7px;
+						right: 6px;
+					}
 				}
 
-				span {
+				.sidebar-icon__group { 
+					position: relative;
+					display: inline-block;
+				}
+
+				.sidebar-element__text {
 
 					@include non-responsive {
 						.be-collapsible-sidebar-collapsed & {
@@ -156,6 +201,7 @@
 						}
 					}
 				}
+
 
 				> .badge {
 					margin-top: $left-sidebar-main-level-label-margin;
@@ -169,12 +215,10 @@
 					}
 				}
 			}
-
 			//Second Level
 			> ul {
 				border-top: 1px solid darken($left-sidebar-bg, 6%);
 				border-bottom: 1px solid darken($left-sidebar-bg, 6%);
-
 				// This is needed to avoid jQuery slideDown flickering effect on hidden elements
 				.be-collapsible-sidebar & {
 					.nav-items {
@@ -185,7 +229,6 @@
 						}
 					}
 				}
-
 				// Remove sub menu vertical borders when sidebar is collapsed
 				@include non-responsive {
 					.be-collapsible-sidebar-collapsed & {
@@ -231,7 +274,7 @@
 						border-right: 1px solid darken($left-sidebar-bg, 6%);
 
 						.title {
-							display:  block;
+							display: block;
 							padding: 30px $left-sidebar-collapsible-submenu-padding;
 							font-size: 1.385rem;
 							color: $left-sidebar-divider-color;
@@ -244,8 +287,7 @@
 							.be-scroller {
 								position: relative;
 								height: 100%;
-
-									// This is required to scroller work properly
+								// This is required to scroller work properly
 								> .content {
 									position: absolute;
 									top: 0;
@@ -260,32 +302,27 @@
 								> ul {
 									border-color: transparent;
 									padding: 0;
-
-										// First level in sub menu
+									// First level in sub menu
 									> li {
 										> a {
 											padding-left: $left-sidebar-collapsible-submenu-padding;
 										}
-
-											// Second level
+										// Second level
 										> ul > li {
 											> a {
-													padding-left: $left-sidebar-collapsible-submenu-padding + 10px;
+												padding-left: $left-sidebar-collapsible-submenu-padding + 10px;
 											}
-
-												// Third level
+											// Third level
 											> ul > li {
 												> a {
 													padding-left: $left-sidebar-collapsible-submenu-padding + 20px;
 												}
-
-													// Fourth level
+												// Fourth level
 												> ul > li {
 													> a {
 														padding-left: $left-sidebar-collapsible-submenu-padding + 30px;
 													}
-
-														// Fifth level
+													// Fifth level
 													> ul > li {
 														> a {
 															padding-left: $left-sidebar-collapsible-submenu-padding + 40px;
@@ -300,9 +337,8 @@
 						}
 					}
 				}
-
 				//Sub menu items
-    			li {
+				li {
 
 					> a {
 						padding: $left-sidebar-sub-level-padding;
@@ -334,24 +370,19 @@
 							color: $left-sidebar-text-active-color;
 						}
 					}
-
 					// Remove spacing for the first sub-menu
 					ul {
 						padding-top: 0;
 						padding-bottom: 0;
 						padding-left: 0;
 					}
-
 					// Multilevel indentation
-
 					// Second level vertical spacing between sub menus
 					> ul {
 						padding: 5px 0;
 					}
-
 					// Second level
 					> ul > li {
-
 						// Multilevel vertical spacing between sub menus
 						ul {
 							padding: 5px 0;
@@ -360,21 +391,18 @@
 						> a {
 							padding-left: $left-sidebar-multilevel-sub-level-padding + 10;
 						}
-
 						// Third level
 						> ul > li {
 
 							> a {
 								padding-left: $left-sidebar-multilevel-sub-level-padding + 20;
 							}
-
 							// Fourth level
 							> ul > li {
 
 								> a {
 									padding-left: $left-sidebar-multilevel-sub-level-padding + 30;
 								}
-
 								// Fifth level
 								// Since this level there is no enough space, feel free to expand more sub levels if you need to
 								> ul > li {
@@ -388,7 +416,6 @@
 					}
 				}
 			}
-
 			//First level active
 			&.active {
 
@@ -406,7 +433,6 @@
 					}
 				}
 			}
-
 			// First level open
 			&.open {
 
@@ -431,7 +457,6 @@
 		}
 
 		li {
-
 			//Parent elements
 			&.parent {
 
@@ -464,7 +489,6 @@
 				}
 			}
 		}
-
 		// Show caret icons on collapsible sub menu items
 		@include non-responsive {
 			.sub-menu.visible {
@@ -559,7 +583,6 @@
 						}
 					}
 				}
-
 				//Second level style
 				> ul {
 					position: relative;
@@ -622,12 +645,12 @@
 
 	.be-fixed-sidebar & {
 		height: 100%;
-		margin-top: $top-header-height + 1px;
+		margin-top: 0;
 		padding-bottom: $top-header-height + 1px;
 		position: fixed;
 		top: 0;
 		bottom: 0;
-		z-index: $zindex-fixed - 1;
+		z-index: $zindex-fixed + 1;
 
 		.left-sidebar-content {
 			position: absolute;
@@ -649,7 +672,6 @@
 			top: $top-header-height;
 		}
 	}
-
 	// Off canvas sidebar
 	.be-offcanvas-menu & {
 		position: fixed;
@@ -679,7 +701,6 @@
 			}
 		}
 	}
-
 	// Off canvas menu only on mobile
 	@include non-responsive {
 		.be-offcanvas-menu-sm:not(.be-fixed-sidebar) & {
@@ -703,7 +724,7 @@
 		transition: $sidebars-push-effect;
 	}
 
-  	.left-sidebar-wrapper {
+	.left-sidebar-wrapper {
 
 		.be-offcanvas-menu & {
 

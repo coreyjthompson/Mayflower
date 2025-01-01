@@ -1,13 +1,10 @@
+using BlazorBootstrap;
 using global::Microsoft.AspNetCore.Components;
 using Mayflower.Core.DomainModels;
-using BlazorBootstrap;
+using Mayflower.Core.Infrastructure.Commands.ReminderOccurences;
+using Mayflower.Core.Infrastructure.Interfaces.Commands;
 using Mayflower.Core.Infrastructure.Queries;
 using Mayflower.Core.Infrastructure.Queries.Reminders;
-using Mayflower.Core.Infrastructure.Interfaces.Queries;
-using Mayflower.Core.Infrastructure.Commands;
-using Mayflower.Core.Infrastructure.Interfaces.Commands;
-using Microsoft.AspNetCore.Http;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Mayflower.Web.Pages;
 

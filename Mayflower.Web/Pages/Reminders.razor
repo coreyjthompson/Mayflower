@@ -1,0 +1,84 @@
+﻿@page "/"
+
+@using Mayflower.Core.Infrastructure.Queries;
+@using Mayflower.Core.Infrastructure.Queries.Reminders;
+@using Mayflower.Core.Infrastructure.Interfaces.Queries;
+@using Mayflower.Core.Extensions;
+@using Mayflower.Web.StateContainerServices;
+
+@inject IQueryProcessor _queries
+@inject NavigationManager _navigationManager
+@inject PageStateContainerService _headerChangeNotificationService
+
+<PageTitle>Bills &amp; Payments</PageTitle>
+<TabGroup>
+    <TabPane Text="Overview">
+        <div class="row">
+            <div class="col-xl-8">
+                <div class="card">
+                    <header class="card-header">
+                        <div class="row">
+                            <div class="col-xl-2 col-lg-3 col-md-6">
+                                <select @onchange="HandleDayRangeChange" class="form-select">
+                                    <option value="30">Next 30 days</option>
+                                    <option value="60">Next 60 days</option>
+                                    <option value="90">Next 90 days</option>
+                                    <option value="120">Next 120 days</option>
+                                </select>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                <UpcomingReminderOccurrences RangeInDays="@_rangeInDays" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </TabPane>
+    <TabPane Text="Cash Flow">
+        <div class="row">
+            <div class="col-xl-8">
+                <div class="card">
+                    <header class="card-header">
+                    </header>
+                    <div class="card-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </TabPane>
+    <TabPane Text="All Recurring">
+        <div class="row">
+            <div class="col-xl-8">
+                <div class="card">
+                    <header class="card-header">
+                    </header>
+                    <div class="card-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </TabPane>
+</TabGroup>
+
+<Modal @ref="_reminderFormModal" Title="Create Series" IsVerticallyCentered="true">
+    <BodyTemplate>
+        <form>
+            <ReminderSeriesForm Reminder="@_selectedReminder"></ReminderSeriesForm>
+        </form>
+    </BodyTemplate>
+    <FooterTemplate>
+        <button type="button" class="btn btn-secondary" @onclick="HandleHideReminderModalClickAsync">Cancel</button>
+        <button type="button" class="btn btn-primary" @onclick="HandleSaveReminderClickAsync">Save</button>
+    </FooterTemplate>
+</Modal>
+
+
+
+
+
+

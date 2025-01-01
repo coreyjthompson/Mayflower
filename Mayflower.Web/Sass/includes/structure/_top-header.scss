@@ -56,39 +56,7 @@
                 width: auto;
             }
         }
-        // logo
-        .navbar-brand {
-            line-height: $top-header-height;
-            height: $top-header-height;
-            width: $logo-width + ($logo-padding * 2);
-            background-image: url("#{contrast-image-selector($top-header-bg, $logo-bg)}");
-            background-repeat: no-repeat;
-            background-position: $logo-padding center;
-            padding: 0 $logo-padding;
-            margin: 0;
-            display: block;
-            //Retina logo
-            @media #{$retina} {
-                background-image: url("#{contrast-image-selector($top-header-bg, $logo-bg-2x)}");
-                background-size: $logo-width $logo-height;
-            }
-            //Phone style
-            @include tablet {
-                display: none;
-            }
-            //Reduce content spacing on tablet res.
-            @include laptop {
-                margin-right: 10px;
-            }
-            //Whitout left sidebar style
-            .be-nosidebar-left & {
-                width: $logo-width + ($logo-padding * 2);
-            }
-            /*// Hide on collapsible left sidebar
-      .be-collapsible-sidebar-hide-logo.be-collapsible-sidebar-collapsed & {
-        display: none;
-      }*/
-        }
+
         // Toggle left sidebar
         .be-toggle-left-sidebar {
             display: inline-block;
@@ -119,7 +87,7 @@
     }
     // Page title
     .page-title {
-        font-size: 1.462rem;
+        font-size: 1.85rem;
         line-height: $top-header-height;
         float: left;
         flex: 1 1 auto;
@@ -527,9 +495,6 @@
             }
         }
 
-        .navbar-brand {
-            width: $logo-width + ($logo-padding * 2);
-        }
 
         .be-toggle-left-sidebar {
             display: inline-block;

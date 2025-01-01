@@ -112,6 +112,34 @@ else
             </div>
         }
     </div>
+
+    <Modal @ref="_editOccurrenceModal" Title="Edit Occurrence" IsVerticallyCentered="true">
+        <BodyTemplate>
+            <EditForm Model="@_editOccurrenceForm" OnSubmit="@HandleOccurrenceFormSubmitAsync" id="editOccurrenceForm">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="occurrenceAmount" class="col-form-label">Amount</label>
+                    </div>
+                    <div class="col-auto">
+                        <CurrencyInput TValue="decimal?" @bind-Value="@_editOccurrenceForm.Amount" Placeholder="Enter amount" Locale="en-US" id="occurrenceAmount" />
+                    </div>
+                </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="occurrenceDate" class="col-form-label">Date</label>
+                    </div>
+                    <div class="col-auto">
+                        <DateInput TValue="DateOnly?" @bind-Value="@_editOccurrenceForm.WhenRescheduledToOccur" Placeholder="Enter Date" id="occurrenceDate" />
+                    </div>
+                </div>
+            </EditForm>
+        </BodyTemplate>
+        <FooterTemplate>
+            <Button Color="ButtonColor.Secondary" @onclick="HandleHideEditModalClickAsync">Cancel</Button>
+            <Button Color="ButtonColor.Primary" Type="ButtonType.Submit" form="editOccurrenceForm">Save changes</Button>
+        </FooterTemplate>
+    </Modal>
+
 }
 
 

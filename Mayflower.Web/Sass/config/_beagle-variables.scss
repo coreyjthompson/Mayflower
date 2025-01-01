@@ -414,7 +414,7 @@ $sidebars-push-effect:                  all .35s ease !default;
 // General Elements
 $logo-width:                            44px !default;
 $logo-height:                           38px !default;
-$logo-padding:                          7px !default;
+$logo-padding:                          7px 0 65px !default;
 $body-background:                       #EEEEEE !default;
 $link-color:                            (theme-color("primary") + 10%) !default;
 $scroller-size:                         6px !default;//Scroller plugin width
@@ -451,7 +451,7 @@ $icons-nav-dropdown-width:              300px !default;
 $user-dropdown-width:                   220px !default;
 
 // Sub Navigation
-$sub-navigation-bg:                     $gray-100 !default;
+$sub-navigation-bg:                     $white !default;
 $sub-navigation-focus-color:            darken(theme-color("light"), 80%) !default;
 $sub-navigation-collapse-padding:       16px 10px !default;
 
@@ -511,7 +511,7 @@ $left-sidebar-progress-bar-color:           is-custom-color($left-sidebar-colors
 $left-sidebar-progress-bar-bg-color:        is-custom-color($vartype: $left-sidebar-colors, $list-name: "left-sidebar-progress-bar-bg-color", $function-name: "lighten", $param1: $left-sidebar-progress-bar-color, $param5: 10%) !default;
 $left-sidebar-sub-menu-arrow-color:         is-custom-color($left-sidebar-colors, "left-sidebar-sub-menu-arrow-color", "shade-correction", $left-sidebar-bg) !default;
 $left-sidebar-logo-bg:                      is-custom-color($vartype: $left-sidebar-colors, $list-name: "left-sidebar-logo-bg", $function-name: "darken", $param1: theme-color("dark"), $param5: 1.5%) !default;
-$left-sidebar-icon-size:                    19px !default;
+$left-sidebar-icon-size:                    24px !default;
 $left-sidebar-main-level-font-size:         1.077rem !default;
 $left-sidebar-main-level-hover-bg:          darken($left-sidebar-bg, 2%);
 $left-sidebar-main-level-hover-text-color:  is-custom-color($left-sidebar-colors, "left-sidebar-main-level-hover-text-color", "assign", $left-sidebar-text-active-color) !default;

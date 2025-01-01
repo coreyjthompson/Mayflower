@@ -230,3 +230,8 @@ select.form-control-xs {
     color: #707070;
   }
 }
+
+//Floating form labels
+.form-floating > label {
+    left: unset;
+}

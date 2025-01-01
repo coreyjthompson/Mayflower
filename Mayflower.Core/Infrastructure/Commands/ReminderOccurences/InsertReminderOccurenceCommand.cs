@@ -4,7 +4,7 @@ using Mayflower.Core.Infrastructure.Data;
 using Mayflower.Core.Infrastructure.Interfaces.Commands;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mayflower.Core.Infrastructure.Commands
+namespace Mayflower.Core.Infrastructure.Commands.ReminderOccurences
 {
     public class InsertReminderOccurenceCommand : ICommand<bool>
     {
@@ -38,7 +38,7 @@ namespace Mayflower.Core.Infrastructure.Commands
 
         public async Task<bool> HandleAsync(InsertReminderOccurenceCommand command)
         {
-            if(command.ReminderId == 0)
+            if (command.ReminderId == 0)
             {
                 return false;
             }

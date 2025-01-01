@@ -7,8 +7,8 @@
 	border-color: darken($sub-navigation-bg, 7%);
 	border-width: 0;
 	border-bottom: 1px solid darken(theme-color("light"), 10%);
-	padding: 0;
-	margin-bottom: 18px;
+	padding: 0 0 0 15px;
+	margin: -25px -35px 18px -35px;
 
 	@include tablet {
 		background-color: $top-header-bg;
@@ -19,7 +19,7 @@
 	.navbar-collapse {
 		border-color: darken($sub-navigation-bg, 7%);
 		padding: 0;
-		justify-content: center;
+		justify-content: start;
 
 		@include tablet {
 			border-top: 1px solid $left-sidebar-bg;

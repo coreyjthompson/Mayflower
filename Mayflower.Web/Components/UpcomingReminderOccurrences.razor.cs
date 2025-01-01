@@ -3,6 +3,7 @@ using global::Microsoft.AspNetCore.Components;
 using Mayflower.Core.DomainModels;
 using Mayflower.Core.Extensions;
 using Mayflower.Core.Infrastructure.Commands;
+using Mayflower.Core.Infrastructure.Commands.ReminderOccurences;
 using Mayflower.Core.Infrastructure.Interfaces.Commands;
 using Mayflower.Core.Infrastructure.Queries;
 using Mayflower.Core.Infrastructure.Queries.Reminders;
@@ -25,6 +26,8 @@ namespace Mayflower.Web.Components
         private IList<FinancialAccount>? _accounts = null;
         private IList<PredictionRow>? _predictionRows = null;
         private decimal _availableBalanace = 0;
+        private Modal _editOccurrenceModal = new Modal();
+        private OccurrenceForm _editOccurrenceForm = new OccurrenceForm();
 
         [Parameter]
         public string? RangeInDays { get; set; }
@@ -197,6 +200,26 @@ namespace Mayflower.Web.Components
             return filteredPredictions;
         }
 
+        private async Task SetOccurenceFormData(PredictionRow row, string formAction)
+        {
+            var reminder = _reminders.FirstOrDefault(r => r.Id == row.ReminderId);
+
+            if (reminder != null)
+            {
+                _editOccurrenceForm = new OccurrenceForm
+                {
+                    Amount = row.TransactionAmountForMath,
+                    WhenRescheduledToOccur = row.WhenScheduledToOccur,
+                    ReminderId = row.ReminderId,
+                    Id = row.OccurrenceId ?? 0,
+                    Action = formAction
+                };
+            }
+
+            // Satisfy the method and force a refresh of the ui
+            await Task.FromResult(reminder);
+        }
+
         private PredictionRow MapBasicReminderDetailsToPredictionRow(Reminder reminder)
         {
             var row = new PredictionRow
@@ -240,12 +263,12 @@ namespace Mayflower.Web.Components
                     await CompleteReminderOccurrencesAsync(row.ReminderId);
                     break;
                 case EDIT_OCCURRENCE_ACTION_NAME:
-                    //await SetOccurenceFormData(row, EDIT_OCCURRENCE_ACTION_NAME);
-                    //await EditOccurrenceModal.ShowAsync();
+                    await SetOccurenceFormData(row, EDIT_OCCURRENCE_ACTION_NAME);
+                    await _editOccurrenceModal.ShowAsync();
                     break;
                 case INSERT_OCCURRENCE_ACTION_NAME:
-                    //await SetOccurenceFormData(row, INSERT_OCCURRENCE_ACTION_NAME);
-                    //await EditOccurrenceModal.ShowAsync();
+                    await SetOccurenceFormData(row, INSERT_OCCURRENCE_ACTION_NAME);
+                    await _editOccurrenceModal.ShowAsync();
                     break;
                 case EDIT_REMINDER_ACTION_NAME:
                     await EditReminderAsync(row.ReminderId);
@@ -255,6 +278,52 @@ namespace Mayflower.Web.Components
             }
 
             _predictionRows = await GetPredictionRowsAsync();
+        }
+
+        private async Task HandleOccurrenceFormSubmitAsync()
+        {
+            var row = _predictionRows?.FirstOrDefault(p => p.ReminderId == _editOccurrenceForm.ReminderId);
+
+            if (row != null)
+            {
+                ICommand<bool>? command = null;
+
+                if (_editOccurrenceForm.Action == EDIT_OCCURRENCE_ACTION_NAME)
+                {
+                    command = new EditReminderOccurenceCommand
+                    {
+                        Id = _editOccurrenceForm.Id,
+                        ReasonForOccurrence = ReminderOccurrenceCause.Edit,
+                        WhenOriginallyScheduledToOccur = row.WhenScheduledToOccur,
+                        WhenRescheduledToOccur = _editOccurrenceForm.WhenRescheduledToOccur,
+                        Amount = _editOccurrenceForm.Amount
+                    };
+
+                }
+                else if (_editOccurrenceForm.Action == INSERT_OCCURRENCE_ACTION_NAME)
+                {
+                    command = new InsertReminderOccurenceCommand
+                    {
+                        ReminderId = _editOccurrenceForm.ReminderId,
+                        ReasonForOccurrence = ReminderOccurrenceCause.Edit,
+                        WhenOriginallyScheduledToOccur = row.WhenScheduledToOccur,
+                        WhenRescheduledToOccur = _editOccurrenceForm.WhenRescheduledToOccur,
+                        Amount = _editOccurrenceForm.Amount
+                    };
+                }
+
+                if (command != null && await _commands.Execute(command))
+                {
+                    _predictionRows = await GetPredictionRowsAsync();
+
+                    await _editOccurrenceModal.HideAsync();
+                }
+            }
+        }
+
+        private async Task HandleHideEditModalClickAsync()
+        {
+            await _editOccurrenceModal.HideAsync();
         }
 
         private async Task SkipOccurrenceAsync(int reminderId, string crudAction)
@@ -341,6 +410,11 @@ namespace Mayflower.Web.Components
                 ShowEditOccurrenceButton = true;
                 ShowEditReminderButton = true;
             }
+        }
+
+        private class OccurrenceForm : ReminderOccurrence
+        {
+            public string Action { get; set; } = INSERT_OCCURRENCE_ACTION_NAME;
         }
 
     }

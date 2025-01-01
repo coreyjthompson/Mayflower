@@ -1,0 +1,21 @@
+﻿<nav class="navbar navbar-default be-sub-navigation">
+    <ul class="nav nav-tabs" role="tablist">
+        @foreach (TabPane tab in _tabs)
+        {
+            <li class="nav-item">
+                <a class="@GetButtonCssClass(tab)" href="#" role="tab" @onclick=@( () => ActivateTab(tab) )>@tab.Text</a>
+            </li>
+        }
+    </ul>
+</nav>
+<div class="d-flex mb-3">
+    <div class="flex-fill text-start align-middle"></div>
+    <div class="flex-fill text-end align-middle">
+        <button class="btn btn-space btn-primary btn-xl" type="button" @* @onclick="HandleAddReminderButtonClick" *@>
+            <i class="icon icon-left mdi mdi-plus"></i>Add
+        </button>
+    </div>
+</div>
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>

@@ -4,7 +4,7 @@ namespace Mayflower.Web.Components
     {
         protected override void OnInitialized()
         {
-            _changeNotificationService.HeaderChanged += this.OnChange;
+            _pageStateService.PageChanged += this.OnChange;
         }
 
         private void OnChange(object? sender, EventArgs e)
@@ -14,7 +14,7 @@ namespace Mayflower.Web.Components
 
         public void Dispose()
         {
-            _changeNotificationService.HeaderChanged -= this.OnChange;
+            _pageStateService.PageChanged -= this.OnChange;
         }
     }
 }
