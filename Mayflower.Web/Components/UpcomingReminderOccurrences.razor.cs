@@ -81,7 +81,7 @@ namespace Mayflower.Web.Components
                     }
                     else
                     {
-                        if (reminder.RecurrenceTheme == RecurrenceStyle.Daily)
+                        if (reminder.RecurrenceTheme == RecurrenceStyle.Day)
                         {
                             // Daily recurrences
                             // Start the loop at whenOccurs and run until our running date is equal to or greater than the end date.
@@ -93,7 +93,7 @@ namespace Mayflower.Web.Components
                                 predictions.Add(row);
                             }
                         }
-                        else if (reminder.RecurrenceTheme == RecurrenceStyle.Weekly)
+                        else if (reminder.RecurrenceTheme == RecurrenceStyle.Week)
                         {
                             // Weekly recurrences
                             //RecurrenceInterval X 7 days in a week
@@ -111,7 +111,7 @@ namespace Mayflower.Web.Components
                                 }
                             }
                         }
-                        else if (reminder.RecurrenceTheme == RecurrenceStyle.Monthly)
+                        else if (reminder.RecurrenceTheme == RecurrenceStyle.Month)
                         {
                             // Monthly recurrences
                             // Start the loop at whenOccurs and run until our running date is equal to or greater than the end date.

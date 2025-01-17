@@ -5,9 +5,12 @@ namespace Mayflower.Web.Components
     public partial class TabGroup
     {
         [Parameter]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment HeaderContent { get; set; } = default!;
 
-        public TabPane ActiveTab { get; set; }
+        [Parameter]
+        public RenderFragment ChildContent { get; set; } = default!;
+
+        public TabPane ActiveTab { get; set; } = new TabPane();
         
         private List<TabPane> _tabs = new List<TabPane>();
 

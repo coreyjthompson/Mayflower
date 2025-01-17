@@ -37,7 +37,7 @@
 @import "includes/structure/right-sidebar/tab-chat";
 @import "includes/structure/right-sidebar/tab-todo";
 @import "includes/structure/right-sidebar/tab-settings";
-@import "includes/structure/main-content";
+@import "includes/structure/main-content"; 
 @import "includes/structure/page-head";
 @import "includes/structure/page-aside";
 @import "includes/structure/splash-screen";
@@ -49,21 +49,6 @@
 
 // Forms
 @import "includes/forms/switch-button";
-
-// Elements
-@import "includes/elements/widgets";
-@import "includes/elements/charts";
-@import "includes/elements/colors";
-@import "includes/elements/grid";
-@import "includes/elements/icons";
-@import "includes/elements/loader";
-@import "includes/elements/code";
-@import "includes/elements/divider";
-@import "includes/elements/pricing-tables";
-@import "includes/elements/option-buttons";
-@import "includes/elements/timeline";
-@import "includes/elements/table-filters";
-@import "includes/elements/invoice";
 
 // Bootstrap
 @import "includes/bootstrap/mixins/alerts";
@@ -99,6 +84,24 @@
 @import "includes/bootstrap/pagination";
 @import "includes/bootstrap/forms";
 @import "includes/bootstrap/input-groups";
+
+// Elements
+@import "includes/elements/widgets";
+@import "includes/elements/charts";
+@import "includes/elements/colors";
+@import "includes/elements/grid";
+@import "includes/elements/icons";
+@import "includes/elements/loader";
+@import "includes/elements/code";
+@import "includes/elements/divider";
+@import "includes/elements/pricing-tables";
+@import "includes/elements/option-buttons";
+@import "includes/elements/timeline";
+@import "includes/elements/table-filters";
+@import "includes/elements/invoice";
+@import "includes/elements/tabs";
+@import "includes/elements/cards";
+@import "includes/elements/buttons";
 
 // Pages
 @import "includes/pages/login";

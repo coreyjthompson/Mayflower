@@ -78,7 +78,7 @@ perspective effects (not including the modals and the overlay).
 	color: #fff;
 	background: #e74c3c;
 	position: relative;
-	border-radius: 3px;
+	border-radius: $modal-border-radius; 
 	margin: 30px auto;
 	max-width: 630px;
 	min-width: 320px;

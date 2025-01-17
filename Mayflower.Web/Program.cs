@@ -1,4 +1,3 @@
-using Mayflower.Web.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Mayflower.Web;
@@ -7,6 +6,7 @@ using LazyCache;
 using Mayflower.Core.Infrastructure.Queries;
 using Mayflower.Core.Infrastructure.Data.Extensions;
 using Mayflower.Web.StateContainerServices;
+using Mayflower.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;

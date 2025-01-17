@@ -4,8 +4,8 @@
 .list-group-item {
 	padding: 13px 15px;
 
-	&.active{
-		.icon{
+	&.active {
+		.icon {
 			color: theme-color("light") !important;
 		}
 
@@ -19,7 +19,7 @@
 		}
 	}
 
-	.icon{
+	.icon {
 		margin-right: 18px;
 		font-size: 1.231rem;
 	}
@@ -35,5 +35,9 @@
 			background: theme-color("light");
 			color: theme-color("primary");
 		}
-	}	
+	}
+
+	.btn-rounded > .icon {
+		margin: 0;
+	}
 }

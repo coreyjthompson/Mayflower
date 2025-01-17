@@ -2,6 +2,7 @@ using global::Microsoft.AspNetCore.Components;
 using Mayflower.Core.DomainModels;
 using Mayflower.Core.Extensions;
 using Mayflower.Core.Infrastructure.Queries;
+using System.ComponentModel;
 
 namespace Mayflower.Web.Components
 {
@@ -12,10 +13,15 @@ namespace Mayflower.Web.Components
 
         private ReminderForm _reminderForm = new ReminderForm();
         private IList<(ReminderStyle, string, string)> _reminderStyles = new List<(ReminderStyle, string, string)>();
+        private IList<FormControlItem> _frequencies = new List<FormControlItem>();
         private IList<(RecurrencePosition, string, string)> _positions = new List<(RecurrencePosition, string, string)>();
         private IList<(DayOfWeek, string, string)> _daysOfWeek = new List<(DayOfWeek, string, string)>();
         private IList<int> _daysOfMonth = new List<int>();
         private IList<FinancialAccount>? _accounts = null;
+
+        protected bool ShowOneTimeFieldSet { get; set; }
+        protected bool ShowWeeklyFieldSet { get; set; }
+        protected bool ShowMonthlyFieldSet { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -24,6 +30,9 @@ namespace Mayflower.Web.Components
             _daysOfWeek = GetDaysOfWeek();
             _daysOfMonth = GetDaysOfMonth();
             _reminderStyles = GetReminderStyles();
+            _frequencies = GetFrequencyChoices();
+
+            ShowOneTimeFieldSet = true;
         }
 
         protected override void OnParametersSet()
@@ -118,6 +127,41 @@ namespace Mayflower.Web.Components
             return list;
         }
 
+        private IList<(RecurrenceStyle, string, string)> GetRecurrenceStyles()
+        {
+            var list = new List<(RecurrenceStyle, string, string)>();
+
+            foreach (var item in Enum.GetValues(typeof(RecurrenceStyle)))
+            {
+                var style = (RecurrenceStyle)item;
+                var description = style.ToDescription();
+
+                list.Add((style, ((int)style).ToString(), description));
+            }
+
+            return list;
+        }
+
+        private IList<FormControlItem> GetFrequencyChoices()
+        {
+            var list = new List<FormControlItem>();
+
+            foreach (var item in Enum.GetValues(typeof(ReminderFrequency)))
+            {
+                var type = (ReminderFrequency)item;
+                var description = type.ToDescription();
+
+                list.Add(new FormControlItem
+                {
+                    Text = description,
+                    Value = type.ToString(),
+                    OriginalEnum = type
+                });
+            }
+
+            return list;
+        }
+
         private IList<int> GetDaysOfMonth()
         {
             var list = new List<int>();
@@ -171,14 +215,14 @@ namespace Mayflower.Web.Components
             public RecurrencePosition RecurrenceOrdinal { get; set; }
 
             #region Labels
-            public string WhenBeginsLabelText { get; set; } = "Next Due Date";
-            public string WhenExpiresLabelText { get; set; } = default!;
-            public string AmountLabelText { get; set; } = "Amount";
+            public string WhenBeginsLabelText { get; set; } = "Start Date";
+            public string WhenExpiresLabelText { get; set; } = "End Date";
+            public string AmountLabelText { get; set; } = "Recurring Amount";
             public string ReminderThemeLabelText { get; set; } = "Type";
             public string DescriptionLabelText { get; set; } = "Description";
             public string TransactionToLabelText { get; set; } = "Select an account";
             public string TransactionFromLabelText { get; set; } = "Select an account";
-            public string RecurrenceThemeLabelText { get; set; } = default!;
+            public string RecurrenceThemeLabelText { get; set; } = "Frequency";
             public string RecurrenceIntervalLabelText { get; set; } = "Interval";
             public string RecurrenceDayOfMonthLabelText { get; set; } = "Day of the month";
             public string RecurrenceDayOfWeekLabelText { get; set; } = "Day of the week";
@@ -186,7 +230,7 @@ namespace Mayflower.Web.Components
             #endregion
 
             #region Placeholders
-            public string WhenBeginsPlaceholderText { get; set; } = "Next Due Date";
+            public string WhenBeginsPlaceholderText { get; set; } = default!;
             public string WhenExpiresPlaceholderText { get; set; } = default!;
             public string AmountPlaceholderText { get; set; } = "Amount";
             public string ReminderThemePlaceholderText { get; set; } = "Type";
@@ -201,5 +245,37 @@ namespace Mayflower.Web.Components
             #endregion
         }
 
+        public class FormControlItem
+        {
+            public bool IsSelected { get; set; }
+            public bool IsDisabled { get; set; }
+            public dynamic OriginalEnum { get; set; } = default!;
+            public string Text { get; set; } = default!;
+            public string Value { get; set; } = default!;
+        }
+
+        public enum ReminderFrequency
+        {
+            [Description("One-time payment")]
+            None,
+            [Description("Every week")]
+            EveryWeek,
+            [Description("Every month")]
+            EveryMonth,
+            [Description("Every year")]
+            EveryYear,
+            [Description("Twice a month")]
+            TwiceAMonth,
+            [Description("Every quarter")]
+            EveryQuarter,
+            [Description("Every X days")]
+            EveryXDays,
+            [Description("Every X weeks")]
+            EveryXWeeks,
+            [Description("Every X months")]
+            EveryXMonths,
+            [Description("Every X years")]
+            EveryXYears
+        }
     }
 }

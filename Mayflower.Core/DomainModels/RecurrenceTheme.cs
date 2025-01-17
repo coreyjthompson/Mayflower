@@ -24,18 +24,19 @@ namespace Mayflower.Core.DomainModels
             Value = style.ToName() ?? "NoRecurrence";
             Name = style.ToDescription() ?? "No Recurrence";
         }
-
     }
 
     public enum RecurrenceStyle : int
     {
-        [Description("No Recurrence")]
+        [Description("One-time payment")]
         NoRecurrence = 0,
         [Description("Daily")]
-        Daily = 1,
+        Day = 1,
         [Description("Weekly")]
-        Weekly = 2,
+        Week = 2,
         [Description("Monthly")]
-        Monthly = 3
+        Month = 3,
+        [Description("Yearly")]
+        Year = 4
     }
 }

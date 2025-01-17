@@ -3,7 +3,7 @@ using Microsoft.VisualBasic;
 using QFXparser;
 using System.Globalization;
 
-namespace Mayflower.Web.Data
+namespace Mayflower.Web.Services
 {
     public class TransactionService
     {
@@ -25,7 +25,7 @@ namespace Mayflower.Web.Data
             return default!;
         }
 
-        private FinancialStatement MapQfxStatementToFinancialStatement(QFXparser.Statement statement)
+        private FinancialStatement MapQfxStatementToFinancialStatement(Statement statement)
         {
             return new FinancialStatement
             {
@@ -44,9 +44,9 @@ namespace Mayflower.Web.Data
             };
         }
 
-        private Core.DomainModels.FinancialTransaction MapQfxTransactionToTransaction(QFXparser.Transaction transaction)
+        private FinancialTransaction MapQfxTransactionToTransaction(Transaction transaction)
         {
-            return new Core.DomainModels.FinancialTransaction
+            return new FinancialTransaction
             {
                 Type = transaction.Type,
                 ExternalTransactionId = transaction.TransactionId,

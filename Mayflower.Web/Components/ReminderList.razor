@@ -1,0 +1,98 @@
+﻿@* 
+@if (_rows == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>
+        @if (!_rows.Any())
+        {
+            <div class="alert alert-warning" role="alert">
+                Add <a href="r">Reminders</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table">
+                    <tbody>
+                        @if (_rows.Any())
+                        {
+                            foreach (var row in _rows)
+                            {
+                                <tr>
+                                    <td class="text-start align-top">
+                                        <span>@row.Description</span><br />
+                                        <span>@row.NextRecurrenceDetails</span>
+                                    </td>
+                                    <td class="text-start align-top">
+                                        <span>@row.FromAccountName</span><br />
+                                        <span>@row.FromAccountTheme</span>
+                                    </td>
+                                    <td class="text-start align-top">
+                                        <span>@row.TransactionCategory</span><br />
+                                        <span>@row.Theme</span>
+                                    </td>
+                                    <td class="text-end align-top">
+                                        <span>@row.Cost</span><br />
+                                        <span>@row.RecurrenceDescription</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        }
+    </div>
+}
+
+
+ *@
+
+@if (_rows == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>
+        @if (!_rows.Any())
+        {
+            <div class="alert alert-warning" role="alert">
+                Add <a href="r">Reminders</a>
+            </div>
+        }
+        else
+        {
+            <div class="border-top border-grey">
+                @if (_rows.Any())
+                {
+                    foreach (var row in _rows)
+                    {
+                        <div class="row m-0 border-bottom border-grey">
+                            <div class="col-5 p-4">
+                                <div class="mb-1 fs-5">@row.Description</div>
+                                <div class="text-black-50">@row.NextRecurrenceDetails</div>
+                            </div>
+                            <div class="col-3 p-4">
+                                <div class="mb-1 fs-5">@row.FromAccountName</div>
+                                <div class="text-black-50">@row.FromAccountTheme</div>
+                            </div>
+                            <div class="col-2 p-4">
+                                <div class="mb-1 fs-5">@row.TransactionCategory</div>
+                                <div class="text-black-50">@row.Theme</div>
+                            </div>
+                            <div class="col-2 text-end p-4">
+                                <div class="mb-1 fs-5">@row.Cost</div>
+                                <div class="text-black-50">@row.RecurrenceDescription</div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+}

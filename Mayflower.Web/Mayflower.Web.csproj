@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Sass\beagle\**" />
-    <Content Remove="Sass\beagle\**" />
-    <EmbeddedResource Remove="Sass\beagle\**" />
-    <None Remove="Sass\beagle\**" />
+    <Compile Remove="Scss\beagle\**" />
+    <Content Remove="Scss\beagle\**" />
+    <EmbeddedResource Remove="Scss\beagle\**" />
+    <None Remove="Scss\beagle\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Dto\" />
     <Folder Include="Properties\" />
     <Folder Include="wwwroot\lib\" />
   </ItemGroup>

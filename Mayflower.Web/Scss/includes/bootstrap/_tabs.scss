@@ -1,12 +1,12 @@
 /*------------------------------------------------------------------
   [Tabs]
-*/
+*/ 
 .nav-tabs {
 	background-color: theme-color("light");
 	border-bottom: 2px solid darken(theme-color("light"), 8%);
+	width: 100%;
 
 	> li.nav-item {
-		margin-bottom: -2px;
 		margin-right: 2px;
 
 		a.nav-link {

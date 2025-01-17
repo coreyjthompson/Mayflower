@@ -5,12 +5,12 @@ namespace Mayflower.Web.Components
     public partial class TabPane
     {
         [CascadingParameter]
-        private TabGroup Parent { get; set; }
+        private TabGroup Parent { get; set; } = default!;
 
         [Parameter]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment ChildContent { get; set; } = default!;
         [Parameter]
-        public string Text { get; set; }
+        public string Text { get; set; } = default!;
 
         protected override void OnInitialized()
         {

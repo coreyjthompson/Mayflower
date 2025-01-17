@@ -31,7 +31,7 @@ namespace Mayflower.Core.DomainModels
     {
         [Description("Error")]
         Error = 0,
-        [Description("Bill Payment")]
+        [Description("Bill")]
         Bill = 1,
         [Description("Income")]
         Income = 2,

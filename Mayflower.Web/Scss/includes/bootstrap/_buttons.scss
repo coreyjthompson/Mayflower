@@ -181,19 +181,27 @@
 
 //Button with rounded borders
 .btn-rounded {
-  border-radius: ceil(($btn-line-height-base + 2) / 2);
+    border-radius: ceil(($btn-line-height-base + 2) / 2);
 
-  &.btn-xs {
-    border-radius: ceil(($btn-xs-line-height + 2) / 2);
-  }
+    &.btn-xs {
+        border-radius: ceil(($btn-xs-line-height + 2) / 2);
+    }
 
-  &.btn-sm {
-    border-radius: ceil(($btn-sm-line-height + 2) / 2);
-  }
+    &.btn-sm {
+        border-radius: ceil(($btn-sm-line-height + 2) / 2);
+    }
 
-  &.btn-lg {
-    border-radius: ceil(($btn-lg-line-height + 2) / 2);
-  }
+    &.btn-lg {
+        border-radius: ceil(($btn-lg-line-height + 2) / 2);
+    }
+
+    &.btn-xl {
+        border-radius: ceil(($btn-xl-line-height + 2) / 2);
+    }
+
+    &.btn-big {
+        border-radius: 100%;
+    }
 }
 
 //Buton spacer helpers
@@ -471,4 +479,10 @@
   &.btn-danger {
     @include btn-transparent-outline($danger-color-text);
   }
+}
+
+.btn {
+    .mdi-plus {
+        font-weight: bolder;
+    }
 }
