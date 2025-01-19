@@ -5,6 +5,7 @@
 @using Mayflower.Core.Infrastructure.Interfaces.Queries;
 @using Mayflower.Core.Extensions;
 @using Mayflower.Web.StateContainerServices;
+@using Mayflower.Web.Components.Reminders;
 
 @inject IQueryProcessor _queries
 @inject NavigationManager _navigationManager
@@ -14,7 +15,7 @@
 <TabGroup>
     <HeaderContent>
         <div class="text-right py-4">
-            <button type="button" class="btn btn-xl btn-primary btn-rounded" @onclick="() => HandleAddReminderButtonClick()"><i class="icon mdi mdi-plus"></i>Add</button>
+            <button type="button" class="btn btn-xl btn-primary btn-rounded" @onclick="() => HandleAddReminderButtonClickAsync()"><i class="icon mdi mdi-plus"></i>Add</button>
         </div>
     </HeaderContent>
     <ChildContent>
@@ -129,17 +130,17 @@
                                                     <div class="text-black-50">@item.RecurrenceDescription</div>
                                                 </div>
                                                 <div class="d-flex align-items-center">
-                                                    <Dropdown Direction="DropdownDirection.Dropstart">
-                                                        <DropdownToggleButton Color="ButtonColor.Secondary" Class="btn-icon btn-big">
+                                                    <div class="btn-group dropstart">
+                                                        <button type="button" class="btn btn-secondary dropdown-toggle btn-icon btn-big" data-bs-toggle="dropdown" aria-expanded="false">
                                                             <i class="icon mdi mdi-more-vert"></i>
-                                                        </DropdownToggleButton>
-                                                        <DropdownMenu>
-                                                            <DropdownItem To="#" Type="ButtonType.Link" @onclick="() => HandleEditSeriesClick(item)">Edit series</DropdownItem>
-                                                            <DropdownItem To="#" Type="ButtonType.Link" @onclick="() => HandleViewSeriesClick(item)">View series</DropdownItem>
-                                                            <DropdownItem To="#" Type="ButtonType.Link" @onclick="() => HandleDeleteSeriesClick(item)">Delete series</DropdownItem>
-                                                            <DropdownItem To="#" Type="ButtonType.Link" @onclick="() => HandleCancelSeriesClick(item)">End series</DropdownItem>
-                                                        </DropdownMenu>
-                                                    </Dropdown>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="dropdown-item" href="#" @onclick="() => HandleEditSeriesClickAsync(item)">Edit series</a></li>
+                                                            <li><a class="dropdown-item" href="#" @onclick="() => HandleViewSeriesClick(item)">View series</a></li>
+                                                            <li><a class="dropdown-item" href="#" @onclick="() => HandleDeleteSeriesClick(item)">Delete series</a></li>
+                                                            <li><a class="dropdown-item" href="#" @onclick="() => HandleCancelSeriesClick(item)">End series</a></li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -164,7 +165,7 @@
 <Modal @ref="SeriesModal" Title="Create Series" IsVerticallyCentered="true" Size="ModalSize.Large">
     <BodyTemplate>
         <form>
-            <ReminderSeriesForm Reminder="@ReminderSeries"></ReminderSeriesForm>
+            <SeriesForm Reminder="@CurrentSeries"></SeriesForm>
         </form>
     </BodyTemplate>
     <FooterTemplate>

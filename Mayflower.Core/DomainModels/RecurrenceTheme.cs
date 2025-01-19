@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using Mayflower.Core.Extensions;
 
 namespace Mayflower.Core.DomainModels
@@ -11,18 +11,18 @@ namespace Mayflower.Core.DomainModels
         public RecurrenceStyle Id { get; set; }
 
         [Column(TypeName = "varchar(25)")]
-        public string Value { get; set; } = "NoRecurrence";
+        public string Name { get; set; } = string.Empty;
 
         [Column(TypeName = "varchar(25)")]
-        public string Name { get; set; } = "No Recurrence";
+        public string Description { get; set; } = string.Empty;
 
         public RecurrenceTheme() { }
 
         public RecurrenceTheme(RecurrenceStyle style)
         {
             Id = style;
-            Value = style.ToName() ?? "NoRecurrence";
-            Name = style.ToDescription() ?? "No Recurrence";
+            Name = style.ToName();
+            Description = style.ToDescription();
         }
     }
 

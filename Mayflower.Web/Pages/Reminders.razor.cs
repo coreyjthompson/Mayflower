@@ -2,6 +2,7 @@ using BlazorBootstrap;
 using Mayflower.Core.DomainModels;
 using Mayflower.Core.Extensions;
 using Mayflower.Core.Infrastructure.Queries.Reminders;
+using Mayflower.Web.Components.Reminders;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Html;
 
@@ -19,11 +20,12 @@ namespace Mayflower.Web.Pages
         private IList<ReminderItem>? _upcomingReminders = null;
         private (DateOnly, DateOnly) _dateRange = (DateOnly.FromDateTime(DateTime.Now), DateOnly.FromDateTime(DateTime.Now).AddDays(30));
 
+        private SeriesForm SeriesModalForm { get; set; } = new SeriesForm();
         private Modal SeriesModal { get; set; } = new Modal();
-        private Reminder ReminderSeries { get; set; } = new Reminder();
-        private IList<ReminderItem>? FilteredRecurringReminders { get; set; }
+        private Reminder? CurrentSeries { get; set; } = new Reminder();
+        private IList<ReminderItem>? FilteredRecurringReminders { get; set; } = default;
         private ReminderSummary Summary { get; set; } = new ReminderSummary();
-        private IList<ButtonStateContainer>? RecurringReminderFilterButtons { get; set; }
+        private IList<ButtonStateContainer>? RecurringReminderFilterButtons { get; set; } = default;
 
         protected override async Task OnInitializedAsync()
         {
@@ -78,7 +80,6 @@ namespace Mayflower.Web.Pages
                 .OrderBy(r => r.Description)
                 .ToList();
         }
-
 
         private IList<ReminderItem> GetUpcomingReminders()
         {
@@ -205,7 +206,7 @@ namespace Mayflower.Web.Pages
                         FromAccountTheme = item.Item2.TransactionFromAccount?.FinancialAccountTheme.ToDescription(),
                         NextRecurrenceDetails = new HtmlString(GetUpcomingRecurrenceDetailsByDateRange(whenSearchBegins, item.Item1))
                     };
-                }    
+                }
 
                 filteredOccurences.Add(row);
             }
@@ -273,16 +274,17 @@ namespace Mayflower.Web.Pages
             await SeriesModal.HideAsync();
         }
 
-        private async Task HandleAddReminderButtonClick()
+        private async Task HandleAddReminderButtonClickAsync()
         {
-            ReminderSeries = new Reminder();
-            ReminderSeries.WhenBegins = DateOnly.FromDateTime(DateTime.Now);
+            CurrentSeries = new Reminder();
+            CurrentSeries.WhenBegins = DateOnly.FromDateTime(DateTime.Now);
             await SeriesModal.ShowAsync();
         }
 
         private async Task HandleSaveReminderClickAsync()
         {
-            // Add a new reminder
+            // Save the series form
+            var isSuccessful = await SeriesModalForm.Save();
             await SeriesModal.HideAsync();
         }
 
@@ -462,7 +464,7 @@ namespace Mayflower.Web.Pages
         private IList<ButtonStateContainer> GetRecurringRemindersListFilterButtons()
         {
             var buttons = new List<ButtonStateContainer>();
-            
+
             buttons.Add(new ButtonStateContainer
             {
                 Text = "All Active",
@@ -494,9 +496,9 @@ namespace Mayflower.Web.Pages
             return buttons;
         }
 
-        private async Task HandleFilterClick(ButtonStateContainer selectedFilter)
+        private void HandleFilterClick(ButtonStateContainer selectedFilter)
         {
-            if (RecurringReminderFilterButtons != null &&  RecurringReminderFilterButtons.Any())
+            if (RecurringReminderFilterButtons != null && RecurringReminderFilterButtons.Any())
             {
                 foreach (var button in RecurringReminderFilterButtons)
                 {
@@ -530,9 +532,18 @@ namespace Mayflower.Web.Pages
             };
         }
 
-        private void HandleEditSeriesClick(ReminderItem item)
+        private async Task HandleEditSeriesClickAsync(ReminderItem item)
         {
 
+            CurrentSeries = _reminders.FirstOrDefault(r => r.Id == item.SeriesId);
+
+            if (CurrentSeries == null)
+            {
+                await HandleAddReminderButtonClickAsync();
+                return;
+            }
+
+            await SeriesModal.ShowAsync();
         }
 
         private void HandleViewSeriesClick(ReminderItem item)
@@ -552,7 +563,7 @@ namespace Mayflower.Web.Pages
 
         private void UpdateReminder(ReminderItem item)
         {
-            foreach(var reminder in _reminders)
+            foreach (var reminder in _reminders)
             {
             }
         }

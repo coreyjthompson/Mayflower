@@ -98,11 +98,11 @@ else
                                                 <DropdownMenu>
                                                     @if (row.ActionMenu.ShowSkipButton)
                                                     {
-                                                        <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.SkipButtonActionName, row)'>@row.ActionMenu.SkipButtonText</DropdownItem>
+                                                        <DropdownItem To="#" Type="DropdownItemType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.SkipButtonActionName, row)'>@row.ActionMenu.SkipButtonText</DropdownItem>
                                                     }
                                                     @if (row.ActionMenu.ShowCompleteButton)
                                                     {
-                                                        <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.CompleteButtonActionName, row)'>@row.ActionMenu.CompleteButtonText</DropdownItem>
+                                                        <DropdownItem To="#" Type="DropdownItemType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.CompleteButtonActionName, row)'>@row.ActionMenu.CompleteButtonText</DropdownItem>
                                                     }
                                                     @if (row.ActionMenu.ShowGroupDivider1)
                                                     {
@@ -110,11 +110,11 @@ else
                                                     }
                                                     @if (row.ActionMenu.ShowEditOccurrenceButton)
                                                     {
-                                                        <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.EditOccurenceButtonActionName, row)'>@row.ActionMenu.EditOccurenceButtonText</DropdownItem>
+                                                        <DropdownItem To="#" Type="DropdownItemType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.EditOccurenceButtonActionName, row)'>@row.ActionMenu.EditOccurenceButtonText</DropdownItem>
                                                     }
                                                     @if (row.ActionMenu.ShowEditReminderButton)
                                                     {
-                                                        <DropdownItem To="#" Type="ButtonType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.EditReminderButtonActionName, row)'>@row.ActionMenu.EditReminderButtonText</DropdownItem>
+                                                        <DropdownItem To="#" Type="DropdownItemType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.EditReminderButtonActionName, row)'>@row.ActionMenu.EditReminderButtonText</DropdownItem>
                                                     }
                                                 </DropdownMenu>
                                             </Dropdown>
