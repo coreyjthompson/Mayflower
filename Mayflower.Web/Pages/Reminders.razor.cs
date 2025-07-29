@@ -533,7 +533,9 @@ namespace Mayflower.Web.Pages
                 return new ReminderSummary();
             }
 
-            decimal income = _upcomingReminders.Where(r => r.Theme == ReminderStyle.Income.ToDescription()).Sum(r => r.TransactionAmount);
+            // Get the Income and Transfer reminders and add them together to get the total
+            decimal income = _upcomingReminders.Where(r => r.Theme == ReminderStyle.Income.ToDescription() || r.Theme == ReminderStyle.Transfer.ToDescription()).Sum(r => r.TransactionAmount);
+            // Get the Bill recurrences for total expenses
             decimal expenses = _upcomingReminders.Where(r => r.Theme == ReminderStyle.Bill.ToDescription()).Sum(r => r.TransactionAmount);
 
             return new ReminderSummary
