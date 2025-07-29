@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Accounts\" />
     <Folder Include="Properties\" />
     <Folder Include="wwwroot\lib\" />
   </ItemGroup>

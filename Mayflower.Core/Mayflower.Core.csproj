@@ -7,8 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Infrastructure\Queries\FinancialAccounts\**" />
+    <Compile Remove="Infrastructure\Queries\FinancialStatements\**" />
+    <Compile Remove="Infrastructure\Queries\FinancialTransactions\**" />
     <Compile Remove="Infrastructure\Utilities\**" />
+    <EmbeddedResource Remove="Infrastructure\Queries\FinancialAccounts\**" />
+    <EmbeddedResource Remove="Infrastructure\Queries\FinancialStatements\**" />
+    <EmbeddedResource Remove="Infrastructure\Queries\FinancialTransactions\**" />
     <EmbeddedResource Remove="Infrastructure\Utilities\**" />
+    <None Remove="Infrastructure\Queries\FinancialAccounts\**" />
+    <None Remove="Infrastructure\Queries\FinancialStatements\**" />
+    <None Remove="Infrastructure\Queries\FinancialTransactions\**" />
     <None Remove="Infrastructure\Utilities\**" />
   </ItemGroup>
 
@@ -29,13 +38,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Queries\FinancialAccounts\" />
-    <Folder Include="Infrastructure\Queries\FinancialStatements\" />
-    <Folder Include="Infrastructure\Queries\FinancialTransactions\" />
+    <ProjectReference Include="..\..\QFXparser\QFXparser\QFXparser.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\QFXparser\QFXparser\QFXparser.csproj" />
+    <Folder Include="Infrastructure\Queries\Institutions\" />
   </ItemGroup>
 
 </Project>

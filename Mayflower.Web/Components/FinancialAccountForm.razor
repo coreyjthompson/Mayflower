@@ -1,0 +1,34 @@
+﻿
+@inject IQueryProcessor _queries
+@inject ICommandProcessor _commands
+
+<div>
+    <input type="hidden" @bind="Id" />
+    <div class="row g-3 mb-3">
+        <div class="col-lg-5 form-floating">
+            <select class="form-select" id="accountTypeToSelect" @bind="AccountTypeId">
+                @if (AccountTypeOptions != null && AccountTypeOptions.Any())
+                {
+                    @foreach (var type in AccountTypeOptions)
+                    {
+                        <option value="@type.Value" selected="@type.IsSelected">@type.Text</option>
+                    }
+                }
+            </select>
+            <label for="accountTypeToSelect">Account Type</label>
+        </div>
+    </div>
+    <div class="row g-3 mb-3">
+        <div class="col-lg-9 form-floating">
+            <input type="text" class="form-control" @bind="Nickname" id="accountNickname" placeholder="Account Name" />
+            <label for="accountNickname">Account Name</label>
+        </div>
+    </div>
+</div>
+
+<div class="text-right">
+    <button type="button" class="btn btn-secondary" @onclick="HandleCancelClickAsync">Cancel</button>
+    <button type="button" class="btn btn-primary" @onclick="HandleSaveClickAsync">Save</button>
+</div>
+
+

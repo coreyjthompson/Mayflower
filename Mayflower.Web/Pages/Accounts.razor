@@ -1,0 +1,75 @@
+﻿@page "/Accounts"
+
+@using Mayflower.Core.Infrastructure.Queries;
+@using Mayflower.Core.Infrastructure.Queries.Reminders;
+@using Mayflower.Core.Infrastructure.Interfaces.Queries;
+@using Mayflower.Core.Extensions;
+@using Mayflower.Web.StateContainerServices;
+@using Mayflower.Web.Components.Reminders;
+
+@inject IQueryProcessor _queries
+@inject NavigationManager _navigationManager
+@inject PageStateContainerService _pageStateService
+
+<PageTitle>Accounts</PageTitle>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card card-table">
+            <header class="card-header">
+            </header>
+            <div class="card-body">
+                <ListGroup Data="@AccountRows" Context="item">
+                    <ItemTemplate>
+                        <div class="row m-0 p-3">
+                            <div class="col-5 p-0">
+                                <div class="mb-1 fs-5">@item.Nickname</div>
+                                <div class="text-black-50">@item.AccountNumberDetails</div>
+                            </div>
+                            <div class="col-3 p-0">
+                                <div class="mb-1 fs-5">@item.InstitutionName</div>
+                            </div>
+                            <div class="col-4 text-end p-0">
+                                <div class="flex-row d-flex">
+                                    <div class="text-end flex-fill">
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="btn-group dropstart">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle btn-icon btn-big" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="icon mdi mdi-more-vert"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="javascript:void(0)" @onclick="() => HandleEditAccountClickAsync(item)">Edit account</a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0)" @onclick="() => HandleViewSeriesClick(item)">Mark as closed</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ItemTemplate>
+                    <EmptyDataTemplate>
+                        <p class="text-center mt-4 pb-6 mb-6">
+                            <button type="button" class="btn btn-outline-primary btn-lg">
+                                <i class="icon mdi mdi-plus font-weight-bolder"></i>Add an account
+                            </button>
+                        </p>
+                    </EmptyDataTemplate>
+                </ListGroup>
+            </div>
+        </div>
+    </div>
+</div>
+<Modal @ref="AccountModal" Title="Create Account" IsVerticallyCentered="true" Size="ModalSize.Regular">
+    <BodyTemplate>
+        <form>
+            <FinancialAccountForm FinancialAccount="@SelectedAccount" OnCanceled="HandleHideAccountModalClickAsync" OnSaved="HandleSaveAccountClickAsync"></FinancialAccountForm>
+        </form>
+    </BodyTemplate>
+</Modal>
+
+
+
+
+
+
+

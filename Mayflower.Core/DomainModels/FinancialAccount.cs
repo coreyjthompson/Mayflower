@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mayflower.Core.DomainModels
 {
@@ -15,7 +15,7 @@ namespace Mayflower.Core.DomainModels
         public FinancialAccountStyle FinancialAccountTheme { get; set; }
 
         [Column(TypeName = "varchar(255)")]
-        public string? Nickname { get; set; }
+        public string Nickname { get; set; } = string.Empty;
 
         public int FinancialInstitutionId { get; set; }
 
@@ -28,9 +28,9 @@ namespace Mayflower.Core.DomainModels
         public DateTimeOffset WhenLastUpdated { get; set; }
 
         #region Navigation
-        public virtual FinancialInstitution? FinancialInstitution { get; set; }
+        public virtual FinancialInstitution FinancialInstitution { get; set; } = default!;
 
-        public virtual FinancialAccountTheme? _financialAccountTheme { get; set; }
+        public virtual FinancialAccountTheme _financialAccountTheme { get; set; } = default!;
 
         public virtual IList<FinancialTransaction> Transactions { get; set; } = new List<FinancialTransaction>();
 
