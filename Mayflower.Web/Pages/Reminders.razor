@@ -1,0 +1,178 @@
+﻿@page "/"
+
+@using Mayflower.Core.Infrastructure.Queries;
+@using Mayflower.Core.Infrastructure.Queries.Reminders;
+@using Mayflower.Core.Infrastructure.Interfaces.Queries;
+@using Mayflower.Core.Extensions;
+@using Mayflower.Web.StateContainerServices;
+@using Mayflower.Web.Components.Reminders;
+
+@inject IQueryProcessor _queries
+@inject NavigationManager _navigationManager
+@inject PageStateContainerService _pageStateService
+
+<PageTitle>Bills &amp; Payments</PageTitle>
+<TabGroup>
+    <HeaderContent>
+        <div class="text-right py-4">
+            <button type="button" class="btn btn-xl btn-primary btn-rounded" @onclick="() => HandleAddReminderButtonClickAsync()"><i class="icon mdi mdi-plus"></i>Add</button>
+        </div>
+    </HeaderContent>
+    <ChildContent>
+        <TabPane Text="Overview">
+            <div class="row">
+                <div class="col-xl-8">
+                    <div class="card card-table">
+                        <div class="card-body">
+                            <div class="container-fluid p-4">
+                                <div class="row mb-3">
+                                    <div class="col-xl-2 col-lg-3 col-md-6">
+                                        <select @onchange="HandleDayRangeChange" class="form-select">
+                                            <option value="30">Next 30 days</option>
+                                            <option value="60">Next 60 days</option>
+                                            <option value="90">Next 90 days</option>
+                                            <option value="120">Next 120 days</option>
+                                        </select>
+                                    </div>
+                                    <div class="col align-content-center">
+                                        @GetDateRangeText()
+                                    </div>
+                                </div>
+                                <div class="border rounded p-3">
+                                    <div class="font-weight-bold mb-1 fs-5">
+                                        Summary
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 col-lg-2">
+                                            <span>Income</span><br />
+                                            <span class="fs-5">+@string.Format(CURRENCY_FORMAT, Summary.Income)</span>
+                                        </div>
+                                        <div class="col-4 col-lg-2">
+                                            <span>Expenses</span><br />
+                                            <span class="fs-5">@string.Format(CURRENCY_FORMAT, Summary.Expenses)</span>
+                                        </div>
+                                        <div class="col-4 col-lg-2">
+                                            <span>Net</span><br />
+                                            <span class="fs-5">@string.Format(CURRENCY_FORMAT, Summary.NetTotal)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <ListGroup Data="@_upcomingReminders" Context="item">
+                                <ItemTemplate>
+                                    <div class="row">
+                                        <div class="col-5 p-4">
+                                            <div class="mb-1 fs-5">@item.Description</div>
+                                            <div class="text-black-50">@item.NextRecurrenceDetails</div>
+                                        </div>
+                                        <div class="col-5 p-4">
+                                            <div class="mb-1 fs-5">@item.FromAccountName</div>
+                                            <div class="text-black-50">@item.FromAccountTheme</div>
+                                        </div>
+                                        <div class="col-2 text-end p-4">
+                                            <div class="mb-1 fs-5">@item.Cost</div>
+                                            <div class="text-black-50">@item.RecurrenceDescription</div>
+                                        </div>
+                                    </div>
+                                </ItemTemplate>
+                            </ListGroup>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </TabPane>
+        <TabPane Text="Cash Flow">
+            <div class="row">
+                <div class="col-xl-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <UpcomingReminderOccurrences RangeInDays="@_rangeInDays" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </TabPane>
+        <TabPane Text="All Recurring">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card card-table">
+                        <header class="card-header table-filter-container">
+                            @if (RecurringReminderFilterButtons != null && RecurringReminderFilterButtons.Any())
+                            {
+                                <ul class="nav nav-tabs" role="tablist">
+                                    @foreach (var button in RecurringReminderFilterButtons)
+                                    {
+                                        <li class="nav-item"><a class="@button.CssClass" href="#" role="tab" @onclick='() => HandleFilterClick(button)'>@button.Text</a></li>
+                                    }
+                                </ul>
+                            }
+                        </header>
+                        <div class="card-body">
+                            <ListGroup Data="@FilteredRecurringReminders" Context="item">
+                                <ItemTemplate>
+                                    <div class="row m-0 p-3">
+                                        <div class="col-5 p-0">
+                                            <div class="mb-1 fs-5">@item.Description</div>
+                                            <div class="text-black-50">@item.NextRecurrenceDetails</div>
+                                        </div>
+                                        <div class="col-3 p-0">
+                                            <div class="mb-1 fs-5">@item.FromAccountName</div>
+                                            <div class="text-black-50">@item.FromAccountTheme</div>
+                                        </div>
+                                        <div class="col-2 p-0">
+                                            <div class="mb-1 fs-5">@item.TransactionCategory</div>
+                                            <div class="text-black-50">@item.Theme</div>
+                                        </div>
+                                        <div class="col-2 text-end p-0">
+                                            <div class="flex-row d-flex">
+                                                <div class="text-end flex-fill">
+                                                    <div class="mb-1 fs-5">@item.Cost</div>
+                                                    <div class="text-black-50">@item.RecurrenceDescription</div>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="btn-group dropstart">
+                                                        <button type="button" class="btn btn-secondary dropdown-toggle btn-icon btn-big" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="icon mdi mdi-more-vert"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="dropdown-item" href="#" @onclick="() => HandleEditSeriesClickAsync(item)">Edit series</a></li>
+                                                            <li><a class="dropdown-item" href="#" @onclick="() => HandleViewSeriesClick(item)">View series</a></li>
+                                                            <li><a class="dropdown-item" href="#" @onclick="() => HandleDeleteSeriesClick(item)">Delete series</a></li>
+                                                            <li><a class="dropdown-item" href="#" @onclick="() => HandleCancelSeriesClick(item)">End series</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ItemTemplate>
+                                <EmptyDataTemplate>
+                                    <p class="text-center mt-4 pb-6 mb-6">
+                                        <button type="button" class="btn btn-outline-primary btn-lg">
+                                            <i class="icon mdi mdi-plus font-weight-bolder"></i>Add a reminder
+                                        </button>
+                                    </p>
+                                </EmptyDataTemplate>
+                            </ListGroup>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </TabPane>
+    </ChildContent>
+</TabGroup>
+
+<Modal @ref="SeriesModal" Title="Create Series" IsVerticallyCentered="true" Size="ModalSize.Large">
+    <BodyTemplate>
+        <form>
+            <SeriesForm Reminder="@CurrentSeries" OnCanceled="HandleHideReminderModalClickAsync" OnSaved="HandleSaveReminderClickAsync"></SeriesForm>
+        </form>
+    </BodyTemplate>
+</Modal>
+
+
+
+
+
+
+

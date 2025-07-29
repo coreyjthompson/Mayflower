@@ -1,0 +1,118 @@
+﻿@page "/reminders"
+@page "/reminders/{AccountId?}"
+
+@using Mayflower.Core.Infrastructure.Queries;
+@using Mayflower.Core.Infrastructure.Queries.Reminders;
+@using Mayflower.Core.Infrastructure.Interfaces.Queries;
+@using Mayflower.Core.Extensions;
+
+@inject IQueryProcessor _queries
+@inject NavigationManager _navigationManager
+
+
+<PageTitle>Reminders</PageTitle>
+<header class="d-flex mb-3">
+    <div class="flex-fill text-start align-middle"><h1>Reminders</h1></div>
+    <div class="flex-fill text-end align-middle">
+        <Dropdown>
+            <DropdownToggleButton Color="ButtonColor.Primary" Size="Size.Large">Add</DropdownToggleButton>
+            <DropdownMenu>
+                <DropdownItem To="#" Type="DropdownItemType.Link">Bill</DropdownItem>
+                <DropdownItem To="#" Type="DropdownItemType.Link">Income</DropdownItem>
+                <DropdownItem To="#" Type="DropdownItemType.Link">Transfer</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+    </div>
+</header>
+<div>
+    @if (ReminderRows == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <div class="row mb-3">
+            <div class="col-md-6 col-lg-5 col-xl-2 mb-3 mb-lg-0">
+                @if (Accounts == null)
+                {
+                    <p class="px-3">
+                        <em>Loading list of accounts...</em>
+                    </p>
+                }
+                else
+                {
+                    <select @onchange="HandleAccountChangeAsync" class="form-select">
+                        <option value="">Select an account</option>
+                        @foreach (var account in Accounts)
+                        {
+                            if (account.Id == GetConvertedAccountId())
+                            {
+                                <option value="@account.Id" selected>@account.Nickname</option>
+                            }
+                            else
+                            {
+                                <option value="@account.Id">@account.Nickname</option>
+                            }
+                        }
+                    </select>
+                }
+            </div>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(AccountId))
+        {
+            @if (!ReminderRows.Any())
+            {
+                <div class="alert alert-warning" role="alert">
+                    There are no reminders for this account
+                </div>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th width="1%"></th>
+                            <th class="text-start">Type</th>
+                            <th class="text-start">Description</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ReminderRows.Any())
+                        {
+                            foreach (var row in ReminderRows)
+                            {
+                                <tr>
+                                    <td class="text-start align-top">
+                                        <button type="button" class="btn btn-primary btn-sm" @onclick="() => HandleEditReminderButtonClick(row.Id)">Edit</button>
+                                    </td>
+                                    <td class="text-start">@row.ReminderTheme</td>
+                                    <td class="text-start">@row.Description</td>
+                                    <td class="text-end"><span class="@row.AmountCss">@row.AmountForDisplay</span></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            }
+        }
+
+        <Modal @ref="ReminderFormModal" Title="Edit Reminder" IsVerticallyCentered="true">
+            <BodyTemplate>
+                <EditForm Model="@EditReminderForm" OnSubmit="@HandleReminderFormSubmitAsync" id="editReminderForm">
+                    <ReminderSeriesForm Reminder="@SelectedReminder"></ReminderSeriesForm>
+                </EditForm>
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button Color="ButtonColor.Secondary" @onclick="HandleHideReminderModalClickAsync">Cancel</Button>
+                <Button Color="ButtonColor.Primary" Type="ButtonType.Submit" form="editOccurrenceForm">Save changes</Button>
+            </FooterTemplate>
+        </Modal>
+
+    }
+</div>
+
+
+
+
+

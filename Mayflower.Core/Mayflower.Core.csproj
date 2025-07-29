@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Infrastructure\Utilities\**" />
+    <EmbeddedResource Remove="Infrastructure\Utilities\**" />
+    <None Remove="Infrastructure\Utilities\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LazyCache.AspNetCore" Version="2.4.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NodaTime" Version="3.2.1" />
+    <PackageReference Include="Scrutor" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Infrastructure\Queries\FinancialAccounts\" />
+    <Folder Include="Infrastructure\Queries\FinancialStatements\" />
+    <Folder Include="Infrastructure\Queries\FinancialTransactions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\QFXparser\QFXparser\QFXparser.csproj" />
+  </ItemGroup>
+
+</Project>

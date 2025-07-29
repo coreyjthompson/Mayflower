@@ -1,0 +1,337 @@
+﻿
+@inject IQueryProcessor _queries
+@inject ICommandProcessor _commands
+
+<TabGroup>
+    <TabPane Text="Basic Details">
+        <div>
+            <input type="hidden" @bind="_reminderForm.Id" />
+            <div class="row g-3 mb-3">
+                <div class="col form-floating">
+                    <input type="text" class="form-control" @bind="_reminderForm.Description" id="reminderDescriptionInput" placeholder="@_reminderForm.DescriptionPlaceholderText" />
+                    <label for="reminderDescriptionInput">@_reminderForm.DescriptionLabelText</label>
+                </div>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col form-floating">
+                    <CurrencyInput TValue="decimal?" @bind-Value="@_reminderForm.Amount" Placeholder="@_reminderForm.AmountPlaceholderText" Locale="en-US" id="reminderAmountInput" />
+                    <label for="reminderAmountInput">@_reminderForm.AmountLabelText</label>
+                </div>
+                <div class="col form-floating">
+                    <select class="form-select" id="reminderTransactionFromSelect" @bind="_reminderForm.FromAccountId">
+                        <option value="">@_reminderForm.TransactionFromPlaceholderText</option>
+                        @if (_accounts != null && _accounts.Any())
+                        {
+                            @foreach (var account in _accounts)
+                            {
+                                <option value="@account.Id">@account.Nickname</option>
+                            }
+                        }
+                    </select>
+                    <label for="reminderTransactionFromSelect">@_reminderForm.TransactionFromLabelText</label>
+                </div>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col">
+                    <p>@_reminderForm.ReminderThemeLabelText</p>
+                    @foreach (var style in _reminderStyles)
+                    {
+                        <div class="form-check">
+                            <input @onchange="HandleReminderTypeChange" type="radio" class="form-check-input" value="@style.Value" checked="@(style.Value == _reminderForm.TypeId)" name="reminderStyles" id="@style.Id" disabled = "@style.IsDisabled" />
+                            <label class="form-check-label" for="@style.Id">
+                                @(style.Text)
+                            </label>
+                        </div>
+                    }
+                </div>
+                @if (ShowTransferDetails) {
+                    <div class="col form-floating">
+                        <select class="form-select" id="reminderTransactionToSelect" @bind="_reminderForm.ToAccountId">
+                            <option value="">Select an account to transfer to</option>
+                            @if (_accounts != null && _accounts.Any())
+                            {
+                                @foreach (var account in _accounts)
+                                {
+                                    <option value="@account.Id">@account.Nickname</option>
+                                }
+                            }
+                        </select>
+                        <label for="reminderTransactionToSelect">@_reminderForm.TransactionToLabelText</label>
+                    </div>
+                }
+            </div>
+        </div>
+    </TabPane>
+    <TabPane Text="Frequency & Occurrence">
+        <div>
+            <div class="row g-3 mb-3">
+                <div class="col form-floating">
+                    <select @onchange="HandleFrequencyChange" class="form-select" id="reminder-frequency" value="@((int)_reminderForm.Frequency)">
+                        @foreach (var item in Frequencies)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                    <label for="reminder-frequency">Select Frequency</label>
+                </div>
+            </div>
+            @if (ShowOneTimeFieldSet)
+            {
+                <fieldset>
+                    <div class="row mb-3">
+                        <div class="col-6 px-3">
+                            <div>
+                                <p><b>One-time payment</b></p>
+                                <p>Pick a date. This is also your next payment date.</p>
+                            </div>
+                            <div class="form-floating">
+                                <DateInput TValue="DateOnly" @bind-Value="@_reminderForm.WhenBegins" Placeholder="@_reminderForm.WhenBeginsPlaceholderText" id="reminderWhenBegins" />
+                                <label for="reminderWhenBegins">Due date</label>
+                            </div>
+                        </div>
+                    </div>
+                    <Callout HideHeading="true">
+                        One-time payment on @_reminderForm.WhenBegins.ToString("ddd MMM dd yyyy").
+                    </Callout>
+
+                </fieldset>
+            }
+            else if (ShowWeeklyFieldSet)
+            {
+                <fieldset>
+                    <div class="row mb-3">
+                        <div class="col-6 px-3">
+                            <div>
+                                <p><b>Every week</b></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col form-floating">
+                            <DateInput TValue="DateOnly" @bind-Value="@_reminderForm.WhenBegins" Placeholder="@_reminderForm.WhenBeginsPlaceholderText" id="reminderWhenBegins" />
+                            <label for="reminderWhenBegins">@_reminderForm.WhenBeginsLabelText</label>
+                        </div>
+                        <div class="col form-floating">
+                            <DateInput TValue="DateOnly?" @bind-Value="@_reminderForm.WhenExpires" Placeholder="@_reminderForm.WhenExpiresPlaceholderText" id="reminderWhenExpires" />
+                            <label for="reminderWhenExpires">@_reminderForm.WhenExpiresLabelText</label>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col form-floating">
+                            <input type="text" class="form-control" @bind="_reminderForm.RecurrenceInterval" id="reminderIntervalInput" placeholder="@_reminderForm.RecurrenceIntervalPlaceholderText" />
+                            <label for="reminderIntervalInput">@_reminderForm.RecurrenceIntervalLabelText</label>
+                        </div>
+                        <div class="col form-floating">
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col form-floating">
+                            <select class="form-select" id="reminderDayOfWeekSelect" @bind="_reminderForm.DayOfTheWeek">
+                                <option value="">@_reminderForm.RecurrenceDayOfWeekPlaceholderText</option>
+                                @foreach (var day in DaysOfWeek)
+                                {
+                                    <option value="@day.Value">@day.Text</option>
+                                }
+                            </select>
+                            <label for="reminderDayOfWeekSelect">@_reminderForm.RecurrenceDayOfWeekLabelText</label>
+                        </div>
+                        <div class="col form-floating">
+                            <select @onchange="HandlePositionChange" class="form-select" id="reminderTransactionFromSelect">
+                                <option value="">@_reminderForm.RecurrenceOrdinalPlaceholderText</option>
+                                @foreach (var position in Occurences)
+                                {
+                                    <option value="@position.Value">@position.Text</option>
+                                }
+                            </select>
+                            <label for="reminderOrdinalInput">@_reminderForm.RecurrenceOrdinalLabelText</label>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6 form-floating">
+                            <select class="form-select" id="reminderTransactionToSelect" @bind="_reminderForm.ToAccountId">
+                                @if (_accounts != null && _accounts.Any())
+                                {
+                                    @foreach (var account in _accounts)
+                                    {
+                                        <option value="@account.Id">@account.Nickname</option>
+                                    }
+                                }
+                            </select>
+                            <label for="reminderTransactionToSelect">@_reminderForm.TransactionToLabelText</label>
+                        </div>
+                    </div>
+
+                </fieldset>
+            }
+            else if (ShowMonthlyFieldSet)
+            {
+                <fieldset>
+                    <div class="row mb-3">
+                        <div class="col form-floating">
+                            <DateInput TValue="DateOnly" @bind-Value="@_reminderForm.WhenBegins" Placeholder="@_reminderForm.WhenBeginsPlaceholderText" id="reminder_when-begins" />
+                            <label for="reminder_when-begins">@_reminderForm.WhenBeginsLabelText</label>
+                        </div>
+                        <div class="col form-floating">
+                            <DateInput TValue="DateOnly?" @bind-Value="@_reminderForm.WhenExpires" Placeholder="@_reminderForm.WhenExpiresPlaceholderText" id="reminder_when-expires" />
+                            <label for="reminder_when-expires">@_reminderForm.WhenExpiresLabelText</label>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col px-4">
+                            <div>
+                                <p><b>Every Month</b></p>
+                            </div>
+                            <div>
+                                <ul class="nav nav-pills mb-3">
+                                    @foreach (var button in MonthlyToggleButtons)
+                                    {
+                                        <li class="nav-item">
+                                            <a class="@button.CssClass" aria-current="page" href="#" @onclick="() => HandleMonthlyToggleButtonClick(button)">@button.Text</a>
+                                        </li>
+                                    }
+                                </ul>
+                                @if (ShowMonthlyWeekTogglePanel) 
+                                {
+                                    <div class="mb-3">
+                                        <div class="form-floating">
+                                            <select @bind="_reminderForm.DayOfTheWeek" class="form-select" id="reminder_day-of-week">
+                                                @foreach (var day in DaysOfWeek)
+                                                {
+                                                    <option value="@day.Value">@day.Text</option>
+                                                }
+                                            </select>
+                                            <label for="reminder_day-of-week">Select a day of the week</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-floating">
+                                            <select @onchange="HandlePositionChange" class="form-select" id="reminder_occurence">
+                                                @foreach (var position in Occurences)
+                                                {
+                                                    <option value="@position.Value">@position.Text</option>
+                                                }
+                                            </select>
+                                            <label for="reminder_occurence">Select an occurence</label>
+                                        </div>
+                                    </div>
+                                }
+                                else if (ShowMonthlyMonthTogglePanel) 
+                                {
+                                    <Callout HideHeading="true">
+                                        Repeats every month on the @GetOrdinalNumberFromNumber(_reminderForm.WhenBegins.Day).
+                                    </Callout>
+                                 }
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+            }
+            else if (ShowYearlyFieldSet)
+            {
+                <fieldset>
+                    <div class="row mb-3">
+                        <div class="col-6 px-3">
+                            <div>
+                                <p><b>Every year</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+            else if (ShowEveryQuarterFieldSet)
+            {
+                <fieldset>
+                    <div class="row mb-3">
+                        <div class="col-6 px-3">
+                            <div>
+                                <p><b>Every quarter</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+            else if (ShowEveryXDaysFieldSet)
+            {
+                <fieldset>
+                    <div class="row mb-3">
+                        <div class="col-6 px-3">
+                            <div>
+                                <p><b>Every X days</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+            else if (ShowEveryXWeeksFieldSet)
+            {
+                <fieldset class="c-fieldset">
+                    <div class="row mb-3">
+                        <div class="col form-floating">
+                            <DateInput TValue="DateOnly" @bind-Value="@_reminderForm.WhenBegins" id="reminder_when-begins" />
+                            <label for="reminder_when-begins">@_reminderForm.WhenBeginsLabelText</label>
+                        </div>
+                        <div class="col form-floating">
+                            <DateInput TValue="DateOnly?" @bind-Value="@_reminderForm.WhenExpires" id="reminder_when-expires" />
+                            <label for="reminder_when-expires">@_reminderForm.WhenExpiresLabelText</label>
+                        </div>
+                    </div>
+                    <div class="mb-3 px-4">
+                        <div class="c-fieldset__title c-fieldset__title_theme">
+                            <p>Every</p>
+                            <p><input type="number" class="form-control" @bind="_reminderForm.RecurrenceInterval" min="1" max="52" /></p>
+                            <p>weeks</p>
+                        </div>
+                    </div>
+                    <Callout HideHeading="true">
+                        Repeats every @_reminderForm.RecurrenceInterval weeks on @_reminderForm.WhenBegins.DayOfWeek.
+                    </Callout>
+
+                </fieldset>
+            }
+            else if (ShowEveryXMonthsFieldSet)
+            {
+                <fieldset>
+                    <div class="row mb-3">
+                        <div class="col-6 px-3">
+                            <div>
+                                <p><b>Every X months</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+            else if (ShowEveryXYearsFieldSet)
+            {
+                <fieldset>
+                    <div class="row mb-3">
+                        <div class="col-6 px-3">
+                            <div>
+                                <p><b>Every X years</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+            else if (ShowTwiceAMonthFieldSet)
+            {
+                <fieldset>
+                    <div class="row mb-3">
+                        <div class="col-6 px-3">
+                            <div>
+                                <p><b>Twice a month</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+
+        </div>
+    </TabPane>
+</TabGroup>
+<div class="text-right">
+    <button type="button" class="btn btn-secondary" @onclick="HandleCancelClickAsync">Cancel</button>
+    <button type="button" class="btn btn-primary" @onclick="HandleSaveClickAsync">Save</button>
+</div>
+
+

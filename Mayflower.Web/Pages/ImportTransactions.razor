@@ -1,0 +1,262 @@
+﻿@page "/import"
+
+@using Mayflower.Core.Infrastructure.Interfaces.Queries;
+@using Mayflower.Core.Infrastructure.Interfaces.Commands;
+@using Mayflower.Core.Infrastructure.Queries
+@using Mayflower.Core.Infrastructure.Commands.FinancialTransactions
+@using Mayflower.Web.Services
+
+@inject IQueryProcessor queries
+@inject ICommandProcessor commands
+@inject TransactionService transactionService
+@inject NavigationManager navigationManager
+
+<PageTitle>Import Transactions</PageTitle>
+
+<h1>Import Transactions</h1>
+@if (accounts == null)
+{
+    <p><em>Loading list of accounts</em></p>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-md-6 col-lg-5 col-xl-2">
+                <select @onchange="HandleAccountChange" class="form-select">
+                    <option value="">Select an account</option>
+                    @foreach (var account in accounts)
+                    {
+                        <option value=@account.Id>@account.Nickname</option>
+                    }
+                </select>
+            </div>
+            @if(showImportButton)
+            {
+                <div class="col text-end">
+                    <button type="button" class="btn btn-primary" @onclick="HandleImportClick">Import</button>
+                </div>
+            }
+        </div>
+        @if(showTransactions)
+        {
+            @if (transactionRows == null)
+            {
+                <p><em>Retrieving transactions...</em></p>
+            }
+            else
+            {
+                @if (!transactionRows.Any())
+                {
+                    <div class="alert alert-warning" role="alert">
+                        There are no transactions for this account
+                    </div>
+                }
+                else
+                {
+                    if (showImportMessage)
+                    {
+                        <div class="alert @importResponseStatusCssClass" role="alert">
+                            @importResponseMessage
+                        </div>
+                    }
+                    <div class="row mb-3">
+                        <div class="col">
+                            Account: @accountNumber
+                        </div>
+                        <div class="col">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Current Balance: @currentBalance
+                        </div>
+                        <div class="col">
+                            Available Balance: @availableBalance
+                        </div>
+                        <div class="col">
+                            Transaction Count: @transactionCount
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-start">Date</th>
+                                <th class="text-center">Type</th>
+                                <th class="text-start">Name</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in transactionRows)
+                            {
+                                <tr>
+                                    <td class="text-start">@row.WhenPosted</td>
+                                    <td class="text-center">@row.Type</td>
+                                    <td class="text-start"><span class="">@row.Name</span></td>
+                                    <td class="text-end"><span class="">@row.Amount</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            }
+        }
+
+    </div>
+}
+
+@code {
+    private const string CURRENCYFORMAT = "#,##0.00";
+    private const string DATEFORMAT = "MM/dd/yyy";
+
+    private IList<TransactionRow>? transactionRows;
+    private IList<FinancialTransaction> transactions = new List<FinancialTransaction>();
+    private IList<FinancialAccount>? accounts;
+    private FinancialStatement statement = new FinancialStatement();
+    private string? accountNumber;
+    private string? currentBalance;
+    private string? availableBalance;
+    private string? importResponseMessage;
+    private string? importResponseStatusCssClass;
+    private bool showTransactions;
+    private bool showImportButton;
+    private bool showImportMessage;
+    private int selectedAccountId;
+    private int transactionCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        accounts = await GetAccounts();
+    }
+
+    private async Task<IList<FinancialAccount>> GetAccounts()
+    {
+        var query = new GetFinancialAccountsQuery();
+
+        return await this.queries.Execute(query);
+    }
+
+    private async Task<IList<FinancialTransaction>> GetTransactionsById(int accountId)
+    {
+        var query = new GetLatestStatementByAccountIdQuery();
+        query.AccountId = accountId;
+        var statement = await this.queries.Execute(query);
+
+        if (statement != null)
+        {
+            return statement.Transactions;
+        }
+
+        return new List<FinancialTransaction>();
+    }
+
+    private async Task<FinancialStatement> GetLatestAccountStatement(int accountId)
+    {
+        var query = new GetLatestStatementByAccountIdQuery();
+        query.AccountId = accountId;
+
+        return await this.queries.Execute(query);
+    }
+
+    private async Task HandleAccountChange(ChangeEventArgs e)
+    {
+        this.showImportMessage = false;
+        this.showTransactions = true;
+        this.showImportButton = false;
+        this.transactionRows = null;
+        this.transactionCount = 0;
+        var value = e.Value;
+
+        if(value != null && value.ToString() != string.Empty)
+        {
+            selectedAccountId = Convert.ToInt32(value.ToString());
+            var query = new GetLatestStatementByAccountIdQuery();
+            query.AccountId = selectedAccountId;
+            this.statement = await this.queries.Execute(query);
+
+            if(statement != null)
+            {
+                this.accountNumber = statement.AccountNumber;
+                this.availableBalance = statement.AvailableBalance.Amount.ToString(CURRENCYFORMAT);
+                this.currentBalance = statement.LedgerBalance.Amount.ToString(CURRENCYFORMAT);
+
+                if (statement.Transactions != null && statement.Transactions.Any())
+                {
+                    this.transactions = statement.Transactions.ToList();
+                    this.transactionRows = statement.Transactions.Select(t => new TransactionRow(t)).ToList();
+                    this.transactionCount = this.transactionRows.Count;
+                    this.showImportButton = true;
+                }
+            }
+            else
+            {
+                this.transactionRows = new List<TransactionRow>();
+            }
+        }
+        else
+        {
+            this.showTransactions = false;
+        }
+    }
+
+    private async Task HandleImportClick()
+    {
+        var command = new InsertTransactionsCommand();
+        command.Transactions = this.transactions;
+        command.AccountId = selectedAccountId;
+        command.AvailableBalance = this.statement.AvailableBalance.Amount;
+        command.LedgerBalance = this.statement.LedgerBalance.Amount;
+        var importedCount = await this.commands.Execute(command);
+        this.importResponseMessage = string.Format("{0} transactions were successfully imported", importedCount);
+
+        if(importedCount == 0)
+        {
+            this.importResponseStatusCssClass = "alert-warning";
+        }
+        else
+        {
+            this.importResponseStatusCssClass = "alert-success";
+        }
+
+        this.showImportMessage = true;
+    }
+
+    private class TransactionRow
+    {
+        public TransactionRow(FinancialTransaction transaction)
+        {
+            var typeSuffix = string.Empty;
+
+            if (transaction.Type == "XFER")
+            {
+                if (transaction.Amount < 0)
+                {
+                    typeSuffix = " - Withdrawal";
+                }
+                else
+                {
+                    typeSuffix = " - Deposit";
+                }
+            }
+
+            Type = transaction.Type + typeSuffix;
+            WhenPosted = transaction.WhenPosted.ToString(DATEFORMAT);
+            Amount = transaction.Amount.ToString(CURRENCYFORMAT);
+            Name = transaction.Name;
+
+        }
+
+        public int Id { get; internal set; }
+
+        public string Type { get; internal set; } = default!;
+
+        //public DateTime PostedOn { get; set; }
+
+        public string WhenPosted { get; internal set; }
+
+        public string Amount { get; internal set; }
+
+        public string Name { get; internal set; } = default!;
+    }
+}

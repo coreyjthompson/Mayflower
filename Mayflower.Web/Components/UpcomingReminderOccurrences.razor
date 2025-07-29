@@ -1,0 +1,145 @@
+﻿@inject IQueryProcessor _queries
+@inject ICommandProcessor _commands
+
+<h2>Reminders</h2>
+@if (_predictionRows == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>
+        @* <div class="row mb-3">
+            <div class="col-md-6 col-lg-5 col-xl-2 mb-3 mb-lg-0">
+                @if (Accounts == null)
+                {
+                    <p class="px-3">
+                        <em>Loading list of accounts...</em>
+                    </p>
+                }
+                else
+                {
+                    <select @onchange="HandleAccountChangeAsync" class="form-select">
+                        <option value="">Select an account</option>
+                        @foreach (var account in Accounts)
+                        {
+                            if (account.Id == GetConvertedAccountId())
+                            {
+                                <option value="@account.Id" selected>@account.Nickname</option>
+                            }
+                            else
+                            {
+                                <option value="@account.Id">@account.Nickname</option>
+                            }
+                        }
+                    </select>
+                }
+            </div>
+            <div class="col-md-6 col-lg-5 col-xl-4">
+            </div>
+        </div> *@
+        @if (!_predictionRows.Any())
+        {
+            <div class="alert alert-warning" role="alert">
+                There are no predictions for this account. Add <a href="r">Reminders</a> to start creating predictions.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th width="1%"></th>
+                            <th class="text-start align-top" width="8%">Date</th>
+                            <th class="text-start align-top" width="57%">Pay To / Receive From</th>
+                            <th class="text-end align-top" width="30%">Amount</th>
+                            @if (_showPredictions)
+                            {
+                                <th class="text-end align-top" width="10%">Predicted Balance</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (_predictionRows.Any())
+                        {
+                            foreach (var row in _predictionRows)
+                            {
+                                <tr>
+                                    <td class="text-start align-top">
+                                        @if (row.ActionMenu.ShowMenu)
+                                        {
+                                            <Dropdown>
+                                                <DropdownToggleButton Color="ButtonColor.Primary" Size="Size.Small">Actions</DropdownToggleButton>
+                                                <DropdownMenu>
+                                                    @if (row.ActionMenu.ShowSkipButton)
+                                                    {
+                                                        <DropdownItem To="#" Type="DropdownItemType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.SkipButtonActionName, row)'>@row.ActionMenu.SkipButtonText</DropdownItem>
+                                                    }
+                                                    @if (row.ActionMenu.ShowCompleteButton)
+                                                    {
+                                                        <DropdownItem To="#" Type="DropdownItemType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.CompleteButtonActionName, row)'>@row.ActionMenu.CompleteButtonText</DropdownItem>
+                                                    }
+                                                    @if (row.ActionMenu.ShowGroupDivider1)
+                                                    {
+                                                        <DropdownDivider>Dropdown header</DropdownDivider>
+                                                    }
+                                                    @if (row.ActionMenu.ShowEditOccurrenceButton)
+                                                    {
+                                                        <DropdownItem To="#" Type="DropdownItemType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.EditOccurenceButtonActionName, row)'>@row.ActionMenu.EditOccurenceButtonText</DropdownItem>
+                                                    }
+                                                    @if (row.ActionMenu.ShowEditReminderButton)
+                                                    {
+                                                        <DropdownItem To="#" Type="DropdownItemType.Link" @onclick='() => HandleActionLinkClickAsync(row.ActionMenu.EditReminderButtonActionName, row)'>@row.ActionMenu.EditReminderButtonText</DropdownItem>
+                                                    }
+                                                </DropdownMenu>
+                                            </Dropdown>
+                                        }
+                                    </td>
+                                    <td class="text-start align-top">@row.WhenScheduledToOccur.ToString("MM/dd/yyyy")</td>
+                                    <td class="text-start align-top">@row.Description</td>
+                                    <td class="text-end align-top"><span class="@row.TransactionAmountCss">@row.TransactionAmountForDisplay</span></td>
+                                    @if (_showPredictions)
+                                    {
+                                        <td class="text-end align-top"><span class="@row.ClosingBalanceCss">@row.ClosingBalanceForDisplay</span></td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        }
+    </div>
+
+    <Modal @ref="_editOccurrenceModal" Title="Edit Occurrence" IsVerticallyCentered="true">
+        <BodyTemplate>
+            <EditForm Model="@_editOccurrenceForm" OnSubmit="@HandleOccurrenceFormSubmitAsync" id="editOccurrenceForm">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="occurrenceAmount" class="col-form-label">Amount</label>
+                    </div>
+                    <div class="col-auto">
+                        <CurrencyInput TValue="decimal?" @bind-Value="@_editOccurrenceForm.Amount" Placeholder="Enter amount" Locale="en-US" id="occurrenceAmount" />
+                    </div>
+                </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="occurrenceDate" class="col-form-label">Date</label>
+                    </div>
+                    <div class="col-auto">
+                        <DateInput TValue="DateOnly?" @bind-Value="@_editOccurrenceForm.WhenRescheduledToOccur" Placeholder="Enter Date" id="occurrenceDate" />
+                    </div>
+                </div>
+            </EditForm>
+        </BodyTemplate>
+        <FooterTemplate>
+            <Button Color="ButtonColor.Secondary" @onclick="HandleHideEditModalClickAsync">Cancel</Button>
+            <Button Color="ButtonColor.Primary" Type="ButtonType.Submit" form="editOccurrenceForm">Save changes</Button>
+        </FooterTemplate>
+    </Modal>
+
+}
+
+

@@ -1,0 +1,33 @@
+﻿@inherits MayflowerComponentBase
+@typeparam TItem
+
+<div @ref="@Element" id="@Id" name="@Name" class="@CssClasses" style="@StyleTags">
+    @if (Data?.Any() ?? false)
+    {
+        @foreach (var item in Data)
+        {
+            if (ItemTemplate is not null)
+            {
+                <div class="list-group-item c-list-group__item">
+                    @ItemTemplate(item)
+                </div>
+            }
+        }
+    }
+    else
+    {
+        if (EmptyDataTemplate is not null)
+        {
+            <div class="list-group-item c-list-group__item">
+                @EmptyDataTemplate
+            </div>
+        }
+        else
+        {
+            <div class="list-group-item c-list-group__item">
+                @EmptyText
+            </div>
+        }
+    }
+</div>
+

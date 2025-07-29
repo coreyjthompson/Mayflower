@@ -1,0 +1,86 @@
+﻿@using Mayflower.Core.Infrastructure.Interfaces.Queries;
+@using Mayflower.Core.Infrastructure.Queries
+
+@inject IQueryProcessor _queries
+@inject NavigationManager navigationManager
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Mayflower.Web</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    @if(Accounts == null)
+    {
+        <p class="px-3">
+            <em>Loading list of accounts</em>
+        </p>
+    }
+    else
+    {
+        <nav class="flex-column">
+            @foreach (var account in Accounts)
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="@GetAccountRegistryUrl(account)" >
+                        @account.Nickname 
+                        @* @account.AvailableBalance.ToString("$#,##0.00") *@
+                    </NavLink>
+                </div>
+            }
+        </nav>
+    }
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/import">
+                Import transactions
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/predictions">
+                Predictions
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/reminders">
+                Reminders
+            </NavLink>
+        </div>
+    </nav>
+
+</div>
+
+@code {
+    private bool _collapseNavMenu = true;
+
+    private string? NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
+    private IList<FinancialAccount>? Accounts { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Accounts = await GetAccounts();
+    }
+
+    private void ToggleNavMenu()
+    {
+        _collapseNavMenu = !_collapseNavMenu;
+    }
+
+    private async Task<IList<FinancialAccount>> GetAccounts()
+    {
+        var query = new GetFinancialAccountsQuery();
+
+        return await _queries.Execute(query);
+    }
+
+    private string GetAccountRegistryUrl(FinancialAccount account)
+    {
+        return "/registry/" + account.Id;
+    }
+
+}

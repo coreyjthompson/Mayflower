@@ -1,0 +1,14 @@
+﻿<nav class="navbar navbar-default be-sub-navigation">
+    <ul class="nav nav-tabs" role="tablist">
+        @foreach (TabPane tab in _tabs)
+        {
+            <li class="nav-item">
+                <a class="@GetButtonCssClass(tab)" href="#" role="tab" @onclick=@( () => ActivateTab(tab) )>@tab.Text</a>
+            </li>
+        }
+    </ul>
+</nav>
+@HeaderContent
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>

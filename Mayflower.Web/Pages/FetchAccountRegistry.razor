@@ -1,0 +1,161 @@
+﻿@page "/registry/{AccountId?}"
+
+@using Mayflower.Core.Infrastructure.Interfaces.Queries;
+@using Mayflower.Core.Infrastructure.Queries
+@using Mayflower.Web.Services
+
+@inject IQueryProcessor queries
+@inject TransactionService transactionService
+@inject NavigationManager navigationManager
+
+<PageTitle>Transactions</PageTitle>
+
+<h1>Transactions</h1>
+
+@if (account == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col">
+                Account: @account.Number
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                Current Balance: @account.LedgerBalance
+            </div>
+            <div class="col">
+                Available Balance: @account.AvailableBalance
+            </div>
+        </div>
+        @if (!transactionRows.Any())
+        {
+            <div class="alert alert-warning" role="alert">
+                There are no transactions for this account
+            </div>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="text-start">Date</th>
+                        <th class="text-center">Type</th>
+                        <th class="text-start">Name</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in transactionRows)
+                    {
+                        <tr>
+                            <td class="text-start">@row.WhenPosted</td>
+                            <td class="text-center">@row.Type</td>
+                            <td class="text-start"><span class="">@row.Name</span></td>
+                            <td class="text-end"><span class="">@row.Amount</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+}
+
+@code {
+    private const string CURRENCYFORMAT = "#,##0.00";
+    private const string DATEFORMAT = "MM/dd/yyy";
+
+    private string? accountNumber;
+    private IList<TransactionRow> transactionRows = new List<TransactionRow>();
+    private string? currentBalance;
+    private string? availableBalance;
+    private FinancialAccount? account;
+
+    [Parameter]
+    public string? AccountId { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        int accountId = GetConvertedAccountId();
+
+        if (accountId == 0)
+        {
+            return;
+        }
+
+        var query = new GetFinancialAccountDetailsQuery
+        {
+            AccountId = accountId
+        };
+
+        this.account = await this.queries.Execute(query);
+
+        if (this.account != null && this.account.Transactions != null && this.account.Transactions.Any())
+        {
+            this.transactionRows = this.account.Transactions.Select(t => new TransactionRow(t)).ToList();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.account = null;
+        this.transactionRows = new List<TransactionRow>();
+
+        await OnInitializedAsync();
+    }
+
+    private int GetConvertedAccountId()
+    {
+        int id;
+
+        if (!string.IsNullOrWhiteSpace(this.AccountId) && int.TryParse(this.AccountId, out id))
+        {
+            return id;
+        }
+
+        return 0;
+    }
+
+    private class TransactionRow
+    {
+        public TransactionRow(FinancialTransaction transaction)
+        {
+            var typeSuffix = string.Empty;
+
+            if(transaction.Type == "XFER")
+            {
+                if (transaction.Amount < 0)
+                {
+                    typeSuffix = " - Withdrawal";
+                }
+                else
+                {
+                    typeSuffix = " - Deposit";
+                }
+            }
+
+            Type = transaction.Type + typeSuffix;
+            WhenPosted = transaction.WhenPosted.ToString(DATEFORMAT);
+            Amount = transaction.Amount.ToString(CURRENCYFORMAT);
+            Name = transaction.Name;
+
+        }
+
+        public int Id { get; internal set; }
+
+        public string Type { get; internal set; } = default!;
+
+        public string WhenPosted { get; internal set; }
+
+        public string Amount { get; internal set; }
+
+        public string Name { get; internal set; } = default!;
+    }
+}
