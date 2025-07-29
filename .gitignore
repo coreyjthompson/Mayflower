@@ -366,3 +366,5 @@ FodyWeavers.xsd
 
 # Testing seed data for database
 Mayflower.Core/Infrastructure/Data/Extensions/TestSeedData.cs
+Mayflower.Core/Infrastructure/Data/Migrations/20250729053809_AddTestingData.cs
+Mayflower.Core/Infrastructure/Data/Migrations/20250729053809_AddTestingData.Designer.cs
